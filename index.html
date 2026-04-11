@@ -3,115 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dexter Hub - Cinema Edition</title>
+    <title>Dexter Hub</title>
     <style>
-        :root { 
-            --primary-color: #e50914; 
-            --bg-color: #050505; 
-            --card-bg: #121212; 
-            --text-color: #ffffff; 
-            --accent-color: #b71c1c;
-        }
-
+        :root { --primary-color: #e50914; --bg-color: #050505; --card-bg: #121212; --text-color: #ffffff; }
+        
         body { 
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            font-family: -apple-system, system-ui, sans-serif; 
             background-color: var(--bg-color); 
             color: var(--text-color); 
-            margin: 0; 
-            padding: 0; 
-            -webkit-font-smoothing: antialiased;
+            margin: 0; padding: 0; 
         }
 
         header { 
-            padding: 18px; 
-            background: linear-gradient(to bottom, #000, transparent); 
+            padding: 20px; 
             text-align: center; 
             font-weight: 900; 
-            letter-spacing: 4px; 
-            position: sticky; 
-            top: 0; 
-            z-index: 1000;
+            letter-spacing: 3px; 
+            background: linear-gradient(to bottom, #000, transparent);
         }
 
-        .container { padding: 20px; max-width: 1100px; margin: 0 auto; }
+        .container { padding: 20px; max-width: 1200px; margin: 0 auto; }
 
-        /* Player Styling */
-        #player-section { display: none; animation: fadeIn 0.4s ease; }
-        
+        /* Player Sektion */
+        #player-section { display: none; animation: fadeIn 0.3s ease; }
         .video-container { 
-            position: relative; 
-            padding-bottom: 56.25%; 
-            background: #000; 
-            border-radius: 12px; 
-            overflow: hidden; 
+            position: relative; padding-bottom: 56.25%; height: 0; 
+            background: #000; border-radius: 12px; overflow: hidden; 
             box-shadow: 0 10px 40px rgba(0,0,0,0.8);
         }
-        
         .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
 
-        /* Verschönerte Progress-Anzeige unter dem Video */
-        .progress-container-ui {
-            margin-top: 15px;
-            background: #1a1a1a;
-            padding: 15px;
-            border-radius: 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .progress-label { font-size: 0.8rem; color: #aaa; display: flex; justify-content: space-between; }
-        
-        .progress-bar-bg { width: 100%; height: 6px; background: #333; border-radius: 3px; overflow: hidden; }
-        .progress-bar-fill { width: 0%; height: 100%; background: var(--primary-color); transition: width 0.5s ease; box-shadow: 0 0 10px var(--primary-color); }
-
         .btn-back { 
-            background: transparent; color: #fff; border: 1px solid #444; 
-            padding: 8px 16px; border-radius: 20px; cursor: pointer; 
-            margin-bottom: 15px; font-size: 0.85rem; transition: 0.3s;
+            background: #222; color: white; border: none; 
+            padding: 10px 20px; border-radius: 8px; cursor: pointer; 
+            margin-bottom: 15px; font-weight: bold;
         }
-        .btn-back:hover { background: #fff; color: #000; }
 
-        /* Grid Styling */
-        .movie-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); gap: 20px; }
-        
+        /* Grid Sektion */
+        .movie-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); 
+            gap: 20px; 
+        }
         .movie-card { 
-            background: var(--card-bg); 
-            border-radius: 12px; 
-            overflow: hidden; 
-            cursor: pointer; 
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            position: relative;
+            background: var(--card-bg); border-radius: 10px; 
+            overflow: hidden; cursor: pointer; transition: 0.3s; 
+            border: 1px solid #222;
         }
-
-        .movie-card:hover { transform: translateY(-8px); box-shadow: 0 12px 24px rgba(229,9,20,0.2); }
-
+        .movie-card:hover { transform: scale(1.05); border-color: var(--primary-color); }
+        
         .card-img { 
-            aspect-ratio: 2/3; 
-            background: linear-gradient(135deg, #222, #000); 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            color: var(--primary-color); 
-            font-weight: 800;
-            font-size: 0.9rem;
-            text-align: center;
-            padding: 15px;
+            aspect-ratio: 2/3; background: #1a1a1a; 
+            display: flex; align-items: center; justify-content: center; 
+            color: var(--primary-color); font-weight: bold; text-align: center; padding: 10px;
         }
+        .card-title { padding: 12px; font-size: 0.9rem; text-align: center; margin: 0; font-weight: 500; }
 
-        .card-info { padding: 12px; }
-        .card-title { font-size: 0.85rem; margin: 0; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-        /* Kleine Progressbar auf der Karte */
-        .card-progress-mini {
-            width: 100%; height: 3px; background: #333; margin-top: 8px; border-radius: 2px; overflow: hidden;
-        }
-        .card-progress-fill { height: 100%; background: var(--primary-color); width: 0%; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         @media (max-width: 600px) {
-            .movie-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .movie-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
         }
     </style>
 </head>
@@ -121,22 +72,11 @@
 
     <div class="container">
         <section id="player-section">
-            <button class="btn-back" onclick="closePlayer()">← Zurück zur Übersicht</button>
+            <button class="btn-back" onclick="closePlayer()">← Zurück</button>
             <div class="video-container" id="video-root"></div>
-            
-            <div class="progress-container-ui" id="ui-progress-box">
-                <div class="progress-label">
-                    <span>Aktueller Fortschritt</span>
-                    <span id="percent-text">0%</span>
-                </div>
-                <div class="progress-bar-bg">
-                    <div class="progress-bar-fill" id="bar-fill"></div>
-                </div>
-            </div>
         </section>
 
         <section id="home-section">
-            <h2 style="font-size: 1.2rem; margin-bottom: 25px;">Deine Mediathek</h2>
             <div class="movie-grid" id="main-grid"></div>
         </section>
     </div>
@@ -155,61 +95,39 @@
         const playerSec = document.getElementById('player-section');
         const homeSec = document.getElementById('home-section');
         const videoRoot = document.getElementById('video-root');
-        const barFill = document.getElementById('bar-fill');
-        const percentText = document.getElementById('percent-text');
 
-        // Watch Progress Logik
+        // Watch Progress Tracking (unsichtbar im Hintergrund)
         window.addEventListener("message", function (event) {
             if (event.origin.includes("vidking.net") && activeId) {
                 try {
                     let data = (typeof event.data === "string" && event.data.startsWith("{")) ? JSON.parse(event.data) : event.data;
-
-                    // Wir suchen nach Prozentwerten in den Player-Daten
-                    let progress = 0;
-                    if (data.percentage) progress = Math.round(data.percentage);
-                    else if (data.progress) progress = Math.round(data.progress * 100);
-
-                    if (progress > 0) {
-                        updateUIProgress(progress);
-                        saveProgress(activeId, progress);
-                    }
+                    
+                    // Speichere Rohdaten oder Prozent im Hintergrund
+                    localStorage.setItem(`dexter_status_${activeId}`, JSON.stringify({
+                        progress: data.percentage || data.progress || 0,
+                        lastSeen: new Date().toISOString()
+                    }));
                 } catch (e) {}
             }
         });
 
-        function updateUIProgress(percent) {
-            barFill.style.width = percent + "%";
-            percentText.innerText = percent + "%";
-        }
-
-        function saveProgress(id, percent) {
-            localStorage.setItem(`dexter_p_${id}`, percent);
-        }
-
-        function renderGrid() {
-            mainGrid.innerHTML = contentData.map(item => {
-                const saved = localStorage.getItem(`dexter_p_${item.id}`) || 0;
-                return `
+        function init() {
+            mainGrid.innerHTML = contentData.map(item => `
                 <div class="movie-card" onclick="playContent('${item.id}', '${item.title}')">
                     <div class="card-img">${item.title}</div>
-                    <div class="card-info">
-                        <p class="card-title">${item.title}</p>
-                        <div class="card-progress-mini">
-                            <div class="card-progress-fill" style="width: ${saved}%"></div>
-                        </div>
-                    </div>
+                    <p class="card-title">${item.title}</p>
                 </div>
-            `}).join('');
+            `).join('');
         }
 
         function playContent(id, title) {
             activeId = id;
-            const saved = localStorage.getItem(`dexter_p_${id}`) || 0;
-            updateUIProgress(saved);
-
             const url = `https://www.vidking.net/embed/tv/${id}/1/1?color=e50914&autoPlay=true&nextEpisode=true&episodeSelector=true`;
             
-            videoRoot.innerHTML = `<iframe src="${url}" allowfullscreen sandbox="allow-forms allow-pointer-lock allow-same-origin allow-scripts allow-top-navigation allow-popups-to-escape-sandbox" allow="autoplay; fullscreen"></iframe>`;
+            videoRoot.innerHTML = `
+                <iframe src="${url}" allowfullscreen 
+                sandbox="allow-forms allow-pointer-lock allow-same-origin allow-scripts allow-top-navigation allow-popups-to-escape-sandbox" 
+                allow="autoplay; fullscreen"></iframe>`;
 
             homeSec.style.display = 'none';
             playerSec.style.display = 'block';
@@ -221,10 +139,9 @@
             playerSec.style.display = 'none';
             homeSec.style.display = 'block';
             activeId = null;
-            renderGrid();
         }
 
-        renderGrid();
+        init();
     </script>
 </body>
 </html>
