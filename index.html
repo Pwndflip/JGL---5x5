@@ -3,15 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dexter Universe</title>
+    <title>Dexter Hub - Clean Stream</title>
     <style>
         :root { --primary-color: #e50914; --bg-color: #050505; --card-bg: #121212; --text-color: #ffffff; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 0; }
-        header { padding: 15px 20px; background: rgba(0,0,0,0.95); border-bottom: 1px solid #222; position: sticky; top: 0; z-index: 1000; display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-size: 1.25rem; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; }
-        .container { padding: 20px; max-width: 1200px; margin: 0 auto; }
+        body { font-family: -apple-system, sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 0; }
         
-        #player-section { display: none; margin-bottom: 30px; }
+        header { padding: 15px; background: #000; border-bottom: 2px solid var(--primary-color); text-align: center; font-weight: bold; position: sticky; top: 0; z-index: 1000; }
+        .container { padding: 15px; max-width: 1200px; margin: 0 auto; }
+
+        /* Player Sektion */
+        #player-section { display: none; margin-bottom: 25px; }
         .video-container { 
             position: relative; 
             padding-bottom: 56.25%; 
@@ -19,51 +20,49 @@
             background: #000; 
             border-radius: 8px; 
             overflow: hidden; 
-            box-shadow: 0 4px 20px rgba(0,0,0,0.8); 
         }
+        
+        /* Der unsichtbare Werbe-Blocker über dem iFrame */
         .video-container iframe { 
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; z-index: 1;
         }
 
-        .btn-back { background: var(--primary-color); color: white; border: none; padding: 12px; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 15px; }
-        
-        h2 { font-size: 1.4rem; margin-bottom: 20px; border-left: 4px solid var(--primary-color); padding-left: 10px; }
-        .movie-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
-        .movie-card { background: var(--card-bg); border-radius: 12px; overflow: hidden; border: 1px solid #222; cursor: pointer; text-align: center; padding-bottom: 10px; }
-        .card-img { width: 100%; aspect-ratio: 2/3; background: #222; display: flex; align-items: center; justify-content: center; color: var(--primary-color); font-weight: bold; }
-        
-        footer { text-align: center; padding: 30px; color: #666; font-size: 0.85rem; }
-        @media (min-width: 768px) { .movie-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); } }
+        .btn-back { background: #222; color: white; border: 1px solid #444; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-bottom: 10px; }
+
+        /* Grid */
+        .movie-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); gap: 15px; }
+        .movie-card { background: var(--card-bg); border-radius: 10px; overflow: hidden; border: 1px solid #222; cursor: pointer; transition: 0.2s; }
+        .movie-card:hover { border-color: var(--primary-color); transform: translateY(-5px); }
+        .card-img { aspect-ratio: 2/3; background: linear-gradient(135deg, #1a1a1a, #000); display: flex; align-items: center; justify-content: center; color: var(--primary-color); font-weight: bold; text-align: center; padding: 10px; font-size: 0.8rem; }
+        .card-title { padding: 10px; font-size: 0.85rem; text-align: center; margin: 0; font-weight: bold; }
+
+        @media (min-width: 768px) { .movie-grid { grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); } }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="logo">DEXTER<span style="color:var(--primary-color)">HUB</span></div>
-    </header>
+    <header>DEXTER<span style="color:var(--primary-color)">HUB</span></header>
 
     <div class="container">
         <section id="player-section">
-            <button class="btn-back" onclick="closePlayer()">← Back to Overview</button>
-            <h3 id="display-title" style="margin-bottom: 15px;">Title</h3>
+            <button class="btn-back" onclick="closePlayer()">← Übersicht</button>
+            <h3 id="display-title" style="margin: 0 0 10px 0; font-size: 1rem; color: #ccc;"></h3>
             <div class="video-container" id="video-root"></div>
         </section>
 
         <section id="home-section">
-            <h2 id="section-title">Chronological Order</h2>
+            <h2 style="font-size: 1.1rem; border-left: 3px solid var(--primary-color); padding-left: 10px;">SAMMLUNG</h2>
             <div class="movie-grid" id="main-grid"></div>
         </section>
     </div>
 
-    <footer>Made with ❤️ by <strong>Weird</strong></footer>
-
     <script>
         const contentData = [
-            { id: 1, title: "Dexter", vidId: "1405" },
-            { id: 2, title: "Dexter: Resurrection", vidId: "259909" },
-            { id: 3, title: "Dexter: New Blood", vidId: "131927" },
-            { id: 4, title: "Dexter: Original Sin", vidId: "219937" },
-            { id: 5, title: "Dexter: Early Cuts", vidId: "49530" }
+            { id: "1405", title: "Dexter" },
+            { id: "259909", title: "Dexter: Resurrection" },
+            { id: "131927", title: "Dexter: New Blood" },
+            { id: "219937", title: "Dexter: Original Sin" },
+            { id: "49530", title: "Dexter: Early Cuts" }
         ];
 
         const mainGrid = document.getElementById('main-grid');
@@ -72,27 +71,26 @@
         const videoRoot = document.getElementById('video-root');
         const displayTitle = document.getElementById('display-title');
 
-        function renderGrid() {
+        function init() {
             mainGrid.innerHTML = contentData.map(item => `
-                <div class="movie-card" onclick="playContent('${item.vidId}', '${item.title}')">
+                <div class="movie-card" onclick="playContent('${item.id}', '${item.title}')">
                     <div class="card-img">${item.title}</div>
-                    <p style="margin: 10px 0 0 0; font-size: 0.9rem;">${item.title}</p>
+                    <p class="card-title">${item.title}</p>
                 </div>
             `).join('');
         }
 
-        function playContent(vidId, title) {
+        function playContent(id, title) {
             displayTitle.textContent = title;
+            const url = `https://www.vidking.net/embed/tv/${id}/1/1?color=e50914&autoPlay=true&nextEpisode=true&episodeSelector=true`;
             
-            // WICHTIG: Sandbox wurde erweitert um Popups und Navigation
-            // Ohne allow-top-navigation und allow-popups laden viele Player nicht korrekt.
-            const embedUrl = `https://www.vidking.net/embed/tv/${vidId}/1/1?color=e50914&autoPlay=true&nextEpisode=true&episodeSelector=true`;
-            
+            // Wir ENTFERNEN allow-popups, um Werbung zu killen. 
+            // Wir behalten allow-popups-to-escape-sandbox, um Menüs eine Chance zu geben.
             videoRoot.innerHTML = `
                 <iframe 
-                    src="${embedUrl}" 
+                    src="${url}" 
                     allowfullscreen 
-                    sandbox="allow-forms allow-pointer-lock allow-same-origin allow-scripts allow-top-navigation allow-popups allow-popups-to-escape-sandbox"
+                    sandbox="allow-forms allow-pointer-lock allow-same-origin allow-scripts allow-top-navigation allow-popups-to-escape-sandbox"
                     allow="autoplay; fullscreen">
                 </iframe>`;
 
@@ -107,7 +105,7 @@
             homeSec.style.display = 'block';
         }
 
-        renderGrid();
+        init();
     </script>
 </body>
 </html>
