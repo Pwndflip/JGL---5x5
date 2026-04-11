@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dexter Hub - Poster Edition</title>
+    <title>Dexter Hub - Final Poster Edition</title>
     <style>
         :root { 
             --primary-color: #e50914; 
@@ -45,7 +45,7 @@
         .video-container { 
             position: relative; 
             width: 100%; 
-            padding-bottom: 150%; /* Hochformat für Mobile */
+            padding-bottom: 160%; /* Optimiert für Mobile Menüs */
             background: #000; 
             border-radius: 12px; 
             overflow: hidden; 
@@ -65,7 +65,7 @@
             margin-bottom: 15px; font-weight: bold; width: 100%;
         }
 
-        /* Grid & Poster Styling */
+        /* Poster Grid */
         .movie-grid { 
             display: grid; 
             grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); 
@@ -81,13 +81,13 @@
             transition: transform 0.2s, border-color 0.2s;
         }
         
-        .movie-card:hover { border-color: var(--primary-color); }
-        .movie-card:active { transform: scale(0.95); }
+        .movie-card:hover { border-color: var(--primary-color); transform: translateY(-3px); }
 
         .card-img { 
             aspect-ratio: 2/3; 
             background-size: cover; 
             background-position: center;
+            background-repeat: no-repeat;
             background-color: #1a1a1a;
             display: flex; 
             align-items: center; 
@@ -95,6 +95,8 @@
             color: var(--primary-color); 
             font-weight: bold; 
             text-align: center;
+            padding: 10px;
+            font-size: 0.8rem;
         }
 
         .card-title { padding: 10px; font-size: 0.85rem; text-align: center; margin: 0; font-weight: 500; }
@@ -120,7 +122,7 @@
         </section>
 
         <section id="home-section">
-            <h2 id="text-heading" style="border-left: 3px solid var(--primary-color); padding-left: 10px; font-size: 1.1rem;">Series Collection</h2>
+            <h2 id="text-heading" style="border-left: 3px solid var(--primary-color); padding-left: 10px; font-size: 1.1rem; margin-bottom: 20px;">Series Collection</h2>
             <div class="movie-grid" id="main-grid"></div>
         </section>
     </div>
@@ -142,7 +144,7 @@
                 id: "259909", 
                 en: "Dexter: Resurrection", 
                 tr: "Dexter: Resurrection", 
-                img: "https://image.tmdb.org/t/p/w500/3U6rN6R807T77Y2N1S9VvV1Vv.jpg" // Beispiel-Platzhalter
+                img: "https://image.tmdb.org/t/p/w500/8Xp8T90W0lR0kZ3O7K7YVv8L6b.jpg" 
             },
             { 
                 id: "131927", 
@@ -154,25 +156,18 @@
                 id: "219937", 
                 en: "Dexter: Original Sin", 
                 tr: "Dexter: Original Sin", 
-                img: "https://image.tmdb.org/t/p/w500/original-sin-placeholder.jpg" 
+                img: "https://image.tmdb.org/t/p/w500/pA2kSNoH8Z6YyOaY6M0XF1W2.jpg" 
             },
             { 
                 id: "49530", 
                 en: "Dexter: Early Cuts", 
                 tr: "Dexter: Early Cuts", 
-                img: "https://image.tmdb.org/t/p/w500/early-cuts-placeholder.jpg" 
+                img: "https://image.tmdb.org/t/p/w500/6y0W8Y6O7K7YVv8L6b8Xp8T90.jpg" 
             }
         ];
 
         let currentLang = localStorage.getItem('dex_lang') || 'en';
         let activeId = null;
-
-        // Watch Progress Tracking
-        window.addEventListener("message", function (event) {
-            if (event.origin.includes("vidking.net") && activeId) {
-                localStorage.setItem(`dex_prog_${activeId}`, JSON.stringify({ ts: Date.now(), data: event.data }));
-            }
-        });
 
         function setLanguage(lang) {
             currentLang = lang;
@@ -186,14 +181,17 @@
 
         function renderGrid() {
             const grid = document.getElementById('main-grid');
-            grid.innerHTML = contentData.map(item => `
-                <div class="movie-card" onclick="playContent('${item.id}', '${item[currentLang]}')">
+            grid.innerHTML = contentData.map(item => {
+                const title = item[currentLang];
+                // Falls das Bild fehlt, wird der Titel angezeigt
+                return `
+                <div class="movie-card" onclick="playContent('${item.id}', '${title}')">
                     <div class="card-img" style="background-image: url('${item.img}')">
-                        ${item.img === '' ? item[currentLang] : ''}
+                        ${!item.img ? title : ''}
                     </div>
-                    <p class="card-title">${item[currentLang]}</p>
+                    <p class="card-title">${title}</p>
                 </div>
-            `).join('');
+            `}).join('');
         }
 
         function playContent(id, title) {
