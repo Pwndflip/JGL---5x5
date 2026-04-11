@@ -11,68 +11,98 @@
             font-family: -apple-system, system-ui, sans-serif; 
             background-color: var(--bg-color); 
             color: var(--text-color); 
-            margin: 0; padding: 0; 
+            margin: 0; padding: 0;
+            touch-action: manipulation;
         }
 
         header { 
-            padding: 20px; 
-            text-align: center; 
-            font-weight: 900; 
-            letter-spacing: 3px; 
-            background: linear-gradient(to bottom, #000, transparent);
+            padding: 15px 20px; 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #000;
+            border-bottom: 1px solid #222;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
 
-        .container { padding: 20px; max-width: 1200px; margin: 0 auto; }
+        .logo { font-weight: 900; letter-spacing: 2px; font-size: 1.1rem; }
 
-        /* Player Sektion */
+        /* Sprach-Umschalter Styling */
+        .lang-switcher {
+            display: flex;
+            background: #222;
+            padding: 3px;
+            border-radius: 8px;
+        }
+
+        .lang-btn {
+            background: transparent;
+            color: #888;
+            border: none;
+            padding: 5px 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: 0.3s;
+        }
+
+        .lang-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .container { padding: 15px; max-width: 1200px; margin: 0 auto; }
+
         #player-section { display: none; animation: fadeIn 0.3s ease; }
+        
         .video-container { 
-            position: relative; padding-bottom: 56.25%; height: 0; 
-            background: #000; border-radius: 12px; overflow: hidden; 
-            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+            position: relative; width: 100%; padding-bottom: 65%; 
+            background: #000; border-radius: 8px; overflow: hidden; 
+            box-shadow: 0 4px 25px rgba(0,0,0,0.9);
         }
+
+        @media (min-width: 768px) { .video-container { padding-bottom: 56.25%; } }
+
         .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
 
         .btn-back { 
             background: #222; color: white; border: none; 
-            padding: 10px 20px; border-radius: 8px; cursor: pointer; 
+            padding: 12px 20px; border-radius: 8px; cursor: pointer; 
             margin-bottom: 15px; font-weight: bold;
         }
 
-        /* Grid Sektion */
-        .movie-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); 
-            gap: 20px; 
-        }
-        .movie-card { 
-            background: var(--card-bg); border-radius: 10px; 
-            overflow: hidden; cursor: pointer; transition: 0.3s; 
-            border: 1px solid #222;
-        }
-        .movie-card:hover { transform: scale(1.05); border-color: var(--primary-color); }
+        .movie-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
+
+        .movie-card { background: var(--card-bg); border-radius: 10px; overflow: hidden; cursor: pointer; border: 1px solid #222; }
         
         .card-img { 
             aspect-ratio: 2/3; background: #1a1a1a; 
             display: flex; align-items: center; justify-content: center; 
             color: var(--primary-color); font-weight: bold; text-align: center; padding: 10px;
         }
-        .card-title { padding: 12px; font-size: 0.9rem; text-align: center; margin: 0; font-weight: 500; }
+        .card-title { padding: 10px; font-size: 0.85rem; text-align: center; margin: 0; }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        @media (max-width: 600px) {
-            .movie-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-        }
+        @media (max-width: 600px) { .movie-grid { grid-template-columns: repeat(2, 1fr); } }
     </style>
 </head>
 <body>
 
-    <header>DEXTER<span style="color:var(--primary-color)">HUB</span></header>
+    <header>
+        <div class="logo">DEXTER<span style="color:var(--primary-color)">HUB</span></div>
+        <div class="lang-switcher">
+            <button class="lang-btn active" id="btn-en" onclick="setLanguage('en')">EN</button>
+            <button class="lang-btn" id="btn-tr" onclick="setLanguage('tr')">TR</button>
+        </div>
+    </header>
 
     <div class="container">
         <section id="player-section">
-            <button class="btn-back" onclick="closePlayer()">← Zurück</button>
+            <button class="btn-back" onclick="closePlayer()">←</button>
             <div class="video-container" id="video-root"></div>
         </section>
 
@@ -83,39 +113,33 @@
 
     <script>
         const contentData = [
-            { id: "1405", title: "Dexter" },
-            { id: "259909", title: "Dexter: Resurrection" },
-            { id: "131927", title: "Dexter: New Blood" },
-            { id: "219937", title: "Dexter: Original Sin" },
-            { id: "49530", title: "Dexter: Early Cuts" }
+            { id: "1405", en: "Dexter", tr: "Dexter" },
+            { id: "259909", en: "Dexter: Resurrection", tr: "Dexter: Resurrection" },
+            { id: "131927", en: "Dexter: New Blood", tr: "Dexter: New Blood" },
+            { id: "219937", en: "Dexter: Original Sin", tr: "Dexter: Original Sin" },
+            { id: "49530", en: "Dexter: Early Cuts", tr: "Dexter: Early Cuts" }
         ];
 
+        let currentLang = localStorage.getItem('dex_lang') || 'en';
         let activeId = null;
-        const mainGrid = document.getElementById('main-grid');
-        const playerSec = document.getElementById('player-section');
-        const homeSec = document.getElementById('home-section');
-        const videoRoot = document.getElementById('video-root');
 
-        // Watch Progress Tracking (unsichtbar im Hintergrund)
-        window.addEventListener("message", function (event) {
-            if (event.origin.includes("vidking.net") && activeId) {
-                try {
-                    let data = (typeof event.data === "string" && event.data.startsWith("{")) ? JSON.parse(event.data) : event.data;
-                    
-                    // Speichere Rohdaten oder Prozent im Hintergrund
-                    localStorage.setItem(`dexter_status_${activeId}`, JSON.stringify({
-                        progress: data.percentage || data.progress || 0,
-                        lastSeen: new Date().toISOString()
-                    }));
-                } catch (e) {}
-            }
-        });
+        function setLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('dex_lang', lang);
+            
+            // Buttons aktualisieren
+            document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+            document.getElementById('btn-tr').classList.toggle('active', lang === 'tr');
+            
+            init(); // Grid neu zeichnen
+        }
 
         function init() {
-            mainGrid.innerHTML = contentData.map(item => `
-                <div class="movie-card" onclick="playContent('${item.id}', '${item.title}')">
-                    <div class="card-img">${item.title}</div>
-                    <p class="card-title">${item.title}</p>
+            const grid = document.getElementById('main-grid');
+            grid.innerHTML = contentData.map(item => `
+                <div class="movie-card" onclick="playContent('${item.id}', '${item[currentLang]}')">
+                    <div class="card-img">${item[currentLang]}</div>
+                    <p class="card-title">${item[currentLang]}</p>
                 </div>
             `).join('');
         }
@@ -124,24 +148,25 @@
             activeId = id;
             const url = `https://www.vidking.net/embed/tv/${id}/1/1?color=e50914&autoPlay=true&nextEpisode=true&episodeSelector=true`;
             
-            videoRoot.innerHTML = `
+            document.getElementById('video-root').innerHTML = `
                 <iframe src="${url}" allowfullscreen 
                 sandbox="allow-forms allow-pointer-lock allow-same-origin allow-scripts allow-top-navigation allow-popups-to-escape-sandbox" 
                 allow="autoplay; fullscreen"></iframe>`;
 
-            homeSec.style.display = 'none';
-            playerSec.style.display = 'block';
+            document.getElementById('home-section').style.display = 'none';
+            document.getElementById('player-section').style.display = 'block';
             window.scrollTo(0, 0);
         }
 
         function closePlayer() {
-            videoRoot.innerHTML = '';
-            playerSec.style.display = 'none';
-            homeSec.style.display = 'block';
+            document.getElementById('video-root').innerHTML = '';
+            document.getElementById('player-section').style.display = 'none';
+            document.getElementById('home-section').style.display = 'block';
             activeId = null;
         }
 
-        init();
+        // Initialisierung beim Laden
+        setLanguage(currentLang);
     </script>
 </body>
 </html>
