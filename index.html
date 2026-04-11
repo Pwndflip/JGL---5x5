@@ -3,38 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dexter Hub - Clean Stream</title>
+    <title>Dexter Hub - Tracker Edition</title>
     <style>
         :root { --primary-color: #e50914; --bg-color: #050505; --card-bg: #121212; --text-color: #ffffff; }
         body { font-family: -apple-system, sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 0; }
-        
         header { padding: 15px; background: #000; border-bottom: 2px solid var(--primary-color); text-align: center; font-weight: bold; position: sticky; top: 0; z-index: 1000; }
         .container { padding: 15px; max-width: 1200px; margin: 0 auto; }
 
         /* Player Sektion */
         #player-section { display: none; margin-bottom: 25px; }
-        .video-container { 
-            position: relative; 
-            padding-bottom: 56.25%; 
-            height: 0; 
-            background: #000; 
-            border-radius: 8px; 
-            overflow: hidden; 
-        }
+        .video-container { position: relative; padding-bottom: 56.25%; height: 0; background: #000; border-radius: 8px; overflow: hidden; }
+        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; z-index: 1; }
         
-        /* Der unsichtbare Werbe-Blocker über dem iFrame */
-        .video-container iframe { 
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; z-index: 1;
-        }
-
+        #messageArea { margin-top: 10px; padding: 10px; background: #1a1a1a; border-radius: 5px; font-size: 0.75rem; color: #888; border-left: 3px solid var(--primary-color); }
         .btn-back { background: #222; color: white; border: 1px solid #444; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-bottom: 10px; }
 
         /* Grid */
         .movie-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); gap: 15px; }
-        .movie-card { background: var(--card-bg); border-radius: 10px; overflow: hidden; border: 1px solid #222; cursor: pointer; transition: 0.2s; }
-        .movie-card:hover { border-color: var(--primary-color); transform: translateY(-5px); }
+        .movie-card { background: var(--card-bg); border-radius: 10px; overflow: hidden; border: 1px solid #222; cursor: pointer; position: relative; }
         .card-img { aspect-ratio: 2/3; background: linear-gradient(135deg, #1a1a1a, #000); display: flex; align-items: center; justify-content: center; color: var(--primary-color); font-weight: bold; text-align: center; padding: 10px; font-size: 0.8rem; }
         .card-title { padding: 10px; font-size: 0.85rem; text-align: center; margin: 0; font-weight: bold; }
+        
+        /* Fortschritts-Badge */
+        .progress-badge { position: absolute; top: 5px; right: 5px; background: var(--primary-color); color: white; font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; font-weight: bold; display: none; }
 
         @media (min-width: 768px) { .movie-grid { grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); } }
     </style>
@@ -48,6 +39,7 @@
             <button class="btn-back" onclick="closePlayer()">← Übersicht</button>
             <h3 id="display-title" style="margin: 0 0 10px 0; font-size: 1rem; color: #ccc;"></h3>
             <div class="video-container" id="video-root"></div>
+            <div id="messageArea">Warte auf Player-Daten...</div>
         </section>
 
         <section id="home-section">
@@ -65,27 +57,65 @@
             { id: "49530", title: "Dexter: Early Cuts" }
         ];
 
+        let activeId = null;
         const mainGrid = document.getElementById('main-grid');
         const playerSec = document.getElementById('player-section');
         const homeSec = document.getElementById('home-section');
         const videoRoot = document.getElementById('video-root');
-        const displayTitle = document.getElementById('display-title');
+        const messageArea = document.querySelector("#messageArea");
+
+        // --- Watch Progress Tracking & LocalStorage ---
+        window.addEventListener("message", function (event) {
+            // Nur Daten von Vidking akzeptieren
+            if (event.origin.includes("vidking.net") && activeId) {
+                try {
+                    let rawData = event.data;
+                    let displayData = rawData;
+
+                    // Falls Daten als JSON-String kommen, parsen
+                    if (typeof rawData === "string" && rawData.startsWith("{")) {
+                        displayData = JSON.parse(rawData);
+                    }
+
+                    // Im messageArea anzeigen
+                    messageArea.innerText = "Tracking: " + (typeof displayData === 'object' ? JSON.stringify(displayData) : displayData);
+
+                    // Lokal speichern
+                    const storageKey = `dexter_progress_${activeId}`;
+                    localStorage.setItem(storageKey, JSON.stringify({
+                        data: displayData,
+                        updated: new Date().toISOString()
+                    }));
+
+                } catch (e) {
+                    console.error("Tracking Error:", e);
+                }
+            }
+        });
 
         function init() {
-            mainGrid.innerHTML = contentData.map(item => `
+            mainGrid.innerHTML = contentData.map(item => {
+                // Prüfen ob Fortschritt im LocalStorage existiert
+                const saved = localStorage.getItem(`dexter_progress_${item.id}`);
+                const hasProgress = saved ? "block" : "none";
+                
+                return `
                 <div class="movie-card" onclick="playContent('${item.id}', '${item.title}')">
+                    <div class="progress-badge" style="display: ${hasProgress}">Gesehen</div>
                     <div class="card-img">${item.title}</div>
                     <p class="card-title">${item.title}</p>
                 </div>
-            `).join('');
+            `}).join('');
         }
 
         function playContent(id, title) {
-            displayTitle.textContent = title;
+            activeId = id; // Aktuelle ID für den Tracker setzen
+            document.getElementById('display-title').textContent = title;
+            messageArea.innerText = "Initialisiere Tracking...";
+            
             const url = `https://www.vidking.net/embed/tv/${id}/1/1?color=e50914&autoPlay=true&nextEpisode=true&episodeSelector=true`;
             
-            // Wir ENTFERNEN allow-popups, um Werbung zu killen. 
-            // Wir behalten allow-popups-to-escape-sandbox, um Menüs eine Chance zu geben.
+            // Sandbox-Einstellungen optimiert für Tracking-Events
             videoRoot.innerHTML = `
                 <iframe 
                     src="${url}" 
@@ -103,6 +133,8 @@
             videoRoot.innerHTML = '';
             playerSec.style.display = 'none';
             homeSec.style.display = 'block';
+            activeId = null;
+            init(); // Grid neu laden um "Gesehen"-Badges zu aktualisieren
         }
 
         init();
