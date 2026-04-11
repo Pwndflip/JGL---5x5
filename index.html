@@ -25,7 +25,6 @@
             color: var(--text-color); 
             margin: 0; padding: 0;
             overflow-x: hidden;
-            /* Verhindert das typische Browser-Scroll-Verhalten am Rand */
             overscroll-behavior-y: contain;
             touch-action: manipulation;
         }
@@ -46,7 +45,7 @@
         }
         .lang-btn.active { background: var(--primary-color); color: white; }
 
-        .container { padding: 15px; max-width: 1200px; margin: 0 auto; }
+        .container { padding: 15px; max-width: 1200px; margin: 0 auto; min-height: 80vh; }
 
         #player-section { display: none; animation: fadeIn 0.3s ease; }
         
@@ -78,10 +77,17 @@
             background-size: cover; 
             background-position: center;
             background-color: #1a1a1a;
-            display: flex; align-items: center; justify-content: center; 
         }
 
         .card-title { padding: 10px; font-size: 0.85rem; text-align: center; margin: 0; font-weight: 500; }
+
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            font-size: 0.8rem;
+            color: #666;
+            letter-spacing: 1px;
+        }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @media (max-width: 600px) { .movie-grid { grid-template-columns: repeat(2, 1fr); } }
@@ -109,6 +115,10 @@
         </section>
     </div>
 
+    <footer>
+        Made with ❤️ by Weird
+    </footer>
+
     <script>
         const uiTranslations = {
             en: { heading: "Series Collection", back: "← Back to Overview" },
@@ -116,9 +126,8 @@
         };
 
         const contentData = [
-            // Dexter als Hauptcover für die Mini-App
-            { id: "1405", en: "Dexter", tr: "Dexter", img: "IMG_2311.png" },
-            // Andere Dexter-Serien
+            { id: "1405", en: "Dexter", tr: "Dexter", img: "IMG_2304.jpeg" },
+            { id: "259909", en: "Dexter: Resurrection", tr: "Dexter: Resurrection", img: "IMG_2305.jpeg" },
             { id: "131927", en: "Dexter: New Blood", tr: "Dexter: New Blood", img: "IMG_2306.jpeg" },
             { id: "219937", en: "Dexter: Original Sin", tr: "Dexter: Original Sin", img: "IMG_2307.jpeg" },
             { id: "49530", en: "Dexter: Early Cuts", tr: "Dexter: Early Cuts", img: "IMG_2308.jpeg" }
