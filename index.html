@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dexter Hub - Final Poster Edition</title>
+    <title>Dexter Hub - Pro Edition</title>
     <style>
         :root { 
             --primary-color: #e50914; 
@@ -39,25 +39,16 @@
 
         .container { padding: 15px; max-width: 1200px; margin: 0 auto; }
 
-        /* Player Sektion */
         #player-section { display: none; animation: fadeIn 0.3s ease; }
         
         .video-container { 
-            position: relative; 
-            width: 100%; 
-            padding-bottom: 160%; /* Optimiert für Mobile Menüs */
-            background: #000; 
-            border-radius: 12px; 
-            overflow: hidden; 
+            position: relative; width: 100%; padding-bottom: 160%; 
+            background: #000; border-radius: 12px; overflow: hidden; 
         }
 
-        @media (min-width: 768px) {
-            .video-container { padding-bottom: 56.25%; }
-        }
+        @media (min-width: 768px) { .video-container { padding-bottom: 56.25%; } }
 
-        .video-container iframe { 
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; 
-        }
+        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
 
         .btn-back { 
             background: #222; color: white; border: 1px solid #444; 
@@ -65,38 +56,21 @@
             margin-bottom: 15px; font-weight: bold; width: 100%;
         }
 
-        /* Poster Grid */
-        .movie-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); 
-            gap: 15px; 
-        }
+        .movie-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
 
         .movie-card { 
-            background: var(--card-bg); 
-            border-radius: 12px; 
-            overflow: hidden; 
-            cursor: pointer; 
-            border: 1px solid #222; 
-            transition: transform 0.2s, border-color 0.2s;
+            background: var(--card-bg); border-radius: 12px; overflow: hidden; 
+            cursor: pointer; border: 1px solid #222; transition: transform 0.2s;
         }
-        
-        .movie-card:hover { border-color: var(--primary-color); transform: translateY(-3px); }
+        .movie-card:active { transform: scale(0.95); }
 
         .card-img { 
             aspect-ratio: 2/3; 
             background-size: cover; 
             background-position: center;
-            background-repeat: no-repeat;
             background-color: #1a1a1a;
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            color: var(--primary-color); 
-            font-weight: bold; 
-            text-align: center;
-            padding: 10px;
-            font-size: 0.8rem;
+            display: flex; align-items: center; justify-content: center; 
+            color: var(--primary-color); font-weight: bold; text-align: center;
         }
 
         .card-title { padding: 10px; font-size: 0.85rem; text-align: center; margin: 0; font-weight: 500; }
@@ -134,36 +108,11 @@
         };
 
         const contentData = [
-            { 
-                id: "1405", 
-                en: "Dexter", 
-                tr: "Dexter", 
-                img: "https://image.tmdb.org/t/p/w500/m99v79IpSjnf6Wv90T4YpS69m7f.jpg" 
-            },
-            { 
-                id: "259909", 
-                en: "Dexter: Resurrection", 
-                tr: "Dexter: Resurrection", 
-                img: "https://image.tmdb.org/t/p/w500/8Xp8T90W0lR0kZ3O7K7YVv8L6b.jpg" 
-            },
-            { 
-                id: "131927", 
-                en: "Dexter: New Blood", 
-                tr: "Dexter: New Blood", 
-                img: "https://image.tmdb.org/t/p/w500/7vX9z66vY9Z2eXvX9vVvVvVvVv.jpg" 
-            },
-            { 
-                id: "219937", 
-                en: "Dexter: Original Sin", 
-                tr: "Dexter: Original Sin", 
-                img: "https://image.tmdb.org/t/p/w500/pA2kSNoH8Z6YyOaY6M0XF1W2.jpg" 
-            },
-            { 
-                id: "49530", 
-                en: "Dexter: Early Cuts", 
-                tr: "Dexter: Early Cuts", 
-                img: "https://image.tmdb.org/t/p/w500/6y0W8Y6O7K7YVv8L6b8Xp8T90.jpg" 
-            }
+            { id: "1405", en: "Dexter", tr: "Dexter", img: "IMG_2304.jpeg" },
+            { id: "259909", en: "Dexter: Resurrection", tr: "Dexter: Resurrection", img: "IMG_2305.jpeg" },
+            { id: "131927", en: "Dexter: New Blood", tr: "Dexter: New Blood", img: "IMG_2306.jpeg" },
+            { id: "219937", en: "Dexter: Original Sin", tr: "Dexter: Original Sin", img: "IMG_2307.jpeg" },
+            { id: "49530", en: "Dexter: Early Cuts", tr: "Dexter: Early Cuts", img: "IMG_2308.jpeg" }
         ];
 
         let currentLang = localStorage.getItem('dex_lang') || 'en';
@@ -181,17 +130,12 @@
 
         function renderGrid() {
             const grid = document.getElementById('main-grid');
-            grid.innerHTML = contentData.map(item => {
-                const title = item[currentLang];
-                // Falls das Bild fehlt, wird der Titel angezeigt
-                return `
-                <div class="movie-card" onclick="playContent('${item.id}', '${title}')">
-                    <div class="card-img" style="background-image: url('${item.img}')">
-                        ${!item.img ? title : ''}
-                    </div>
-                    <p class="card-title">${title}</p>
+            grid.innerHTML = contentData.map(item => `
+                <div class="movie-card" onclick="playContent('${item.id}', '${item[currentLang]}')">
+                    <div class="card-img" style="background-image: url('${item.img}')"></div>
+                    <p class="card-title">${item[currentLang]}</p>
                 </div>
-            `}).join('');
+            `).join('');
         }
 
         function playContent(id, title) {
