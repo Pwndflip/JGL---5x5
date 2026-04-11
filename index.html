@@ -87,10 +87,17 @@
             transition: all 0.25s ease;
             border: 1px solid #222; box-shadow: 0 4px 15px rgba(0,0,0,0.5);
             cursor: pointer;
+            position: relative;
         }
         .movie-card:hover { transform: scale(1.05); box-shadow: 0 10px 30px rgba(229,9,20,0.4); }
 
-        .card-img { width: 100%; aspect-ratio: 2/3; object-fit: cover; display: block; }
+        /* Platzhalter für das entfernte Bild */
+        .card-placeholder { 
+            width: 100%; aspect-ratio: 2/3; 
+            background: linear-gradient(45deg, #1a1a1a, #222);
+            display: flex; align-items: center; justify-content: center;
+            color: #333; font-size: 3rem;
+        }
 
         .card-content { padding: 12px; }
         .card-title { margin: 0 0 4px 0; font-size: 0.95rem; font-weight: 600; }
@@ -146,14 +153,13 @@
         let lastWatchedId = localStorage.getItem('dexterLastWatched') || null;
 
         const contentData = [
-            { id: "original-sin", titleEn: "Dexter: Original Sin", titleTr: "Dexter: Orijinal Günah", year: "2024", vidkingId: "219937", poster: "https://image.tmdb.org/t/p/w500/9wldu.jpg", useSelector: true },
-            { id: "early-cuts",    titleEn: "Dexter: Early Cuts", titleTr: "Dexter: Erken Kesimler", year: "2009", poster: "https://image.tmdb.org/t/p/w500/f0bFe.jpg", type: "youtube", youtubeId: "iI79oLKBGs4" },
-            { id: "dexter",        titleEn: "Dexter (Seasons 1-8)", titleTr: "Dexter (Sezon 1-8)", year: "2006", vidkingId: "1405", poster: "https://image.tmdb.org/t/p/w500/8oTe9nI1o8vJ9yY5Z4Z3z5y5Z3z.jpg", useSelector: true },
-            { id: "new-blood",     titleEn: "Dexter: New Blood", titleTr: "Dexter: Yeni Kan", year: "2021", vidkingId: "131927", poster: "https://image.tmdb.org/t/p/w500/bvrvb.jpg", useSelector: true },
-            { id: "resurrection",  titleEn: "Dexter: Resurrection", titleTr: "Dexter: Resurrection", year: "2025", vidkingId: "259909", poster: "https://image.tmdb.org/t/p/w500/BuIaS.jpg", useSelector: true }
+            { id: "original-sin", titleEn: "Dexter: Original Sin", titleTr: "Dexter: Orijinal Günah", year: "2024", vidkingId: "219937", useSelector: true },
+            { id: "early-cuts",    titleEn: "Dexter: Early Cuts", titleTr: "Dexter: Erken Kesimler", year: "2009", type: "youtube", youtubeId: "iI79oLKBGs4" },
+            { id: "dexter",        titleEn: "Dexter (Seasons 1-8)", titleTr: "Dexter (Sezon 1-8)", year: "2006", vidkingId: "1405", useSelector: true },
+            { id: "new-blood",     titleEn: "Dexter: New Blood", titleTr: "Dexter: Yeni Kan", year: "2021", vidkingId: "131927", useSelector: true },
+            { id: "resurrection",  titleEn: "Dexter: Resurrection", titleTr: "Dexter: Resurrection", year: "2025", vidkingId: "259909", useSelector: true }
         ];
 
-        // DOM Elements
         const grid = document.getElementById('main-grid');
         const playerSec = document.getElementById('player-section');
         const homeSec = document.getElementById('home-section');
@@ -161,6 +167,10 @@
         const displayTitle = document.getElementById('display-title');
         const btnBack = document.getElementById('btn-back');
         const sectionTitle = document.getElementById('section-title');
+
+        function changeLanguage(lang) {
+            updateLanguage(lang);
+        }
 
         function updateLanguage(lang) {
             currentLang = lang;
@@ -180,7 +190,7 @@
                 card.className = 'movie-card';
 
                 let html = `
-                    <img src="${item.poster}" class="card-img" loading="lazy" alt="${title}">
+                    <div class="card-placeholder">?</div>
                     <div class="card-content">
                         <p class="card-title">${title}</p>
                         <p class="card-year">${item.year}</p>
@@ -199,10 +209,6 @@
 
         function showLoading() {
             videoRoot.innerHTML = `<div class="loading-overlay"><div class="spinner"></div><div>${translations[currentLang].loading}</div><small>${translations[currentLang].slowHint}</small></div>`;
-        }
-
-        function showError() {
-            videoRoot.innerHTML = `<div class="error-overlay"><div style="font-size:2.5rem;margin-bottom:15px;">⚠️</div><div>${translations[currentLang].error}</div></div>`;
         }
 
         function playContent(index) {
@@ -235,10 +241,8 @@
             renderGrid();
         }
 
-        // Init
         btnBack.addEventListener('click', closePlayer);
         updateLanguage('en');
-        renderGrid();
     </script>
 </body>
 </html>
