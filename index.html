@@ -3,53 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <!-- WICHTIG: CSP blockt viele Redirect-Skripte von Vidking -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.vidking.net https://www.youtube.com; frame-src https://www.vidking.net https://www.youtube.com; style-src 'self' 'unsafe-inline'; img-src * data:;">
     <title>Dexter Universe</title>
     <style>
         :root { --primary-color: #e50914; --bg-color: #050505; --card-bg: #121212; --text-color: #ffffff; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 0; }
         header { padding: 15px 20px; background: rgba(0,0,0,0.95); border-bottom: 1px solid #222; position: sticky; top: 0; z-index: 1000; display: flex; justify-content: space-between; align-items: center; }
         .logo { font-size: 1.25rem; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; }
-        .language-switcher { display: flex; gap: 8px; }
-        .lang-btn { background: #222; color: #fff; border: 1px solid #444; padding: 6px 12px; border-radius: 6px; font-size: 0.85rem; cursor: pointer; }
-        .lang-btn.active { background: var(--primary-color); border-color: var(--primary-color); font-weight: bold; }
         .container { padding: 20px; max-width: 1200px; margin: 0 auto; }
+        
         #player-section { display: none; margin-bottom: 30px; }
-        .video-container { position: relative; padding-bottom: 56.25%; height: 0; background: #000; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.8); }
+        .video-container { 
+            position: relative; 
+            padding-bottom: 56.25%; 
+            height: 0; 
+            background: #000; 
+            border-radius: 8px; 
+            overflow: hidden; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.8); 
+        }
         .video-container iframe { 
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; 
         }
-        .loading-overlay, .error-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(5,5,5,0.95); display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--primary-color); z-index: 10; text-align: center; padding: 20px; }
-        .spinner { width: 50px; height: 50px; border: 5px solid #222; border-top: 5px solid var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .btn-back { background: #222; color: white; border: 1px solid #444; padding: 12px; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; width: 100%; }
-        h2 { font-size: 1.4rem; margin-bottom: 20px; padding-left: 5px; border-left: 4px solid var(--primary-color); }
+
+        .btn-back { background: var(--primary-color); color: white; border: none; padding: 12px; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 15px; }
+        
+        h2 { font-size: 1.4rem; margin-bottom: 20px; border-left: 4px solid var(--primary-color); padding-left: 10px; }
         .movie-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
-        .movie-card { background: var(--card-bg); border-radius: 12px; overflow: hidden; transition: transform 0.25s ease, box-shadow 0.25s ease; border: 1px solid #222; box-shadow: 0 2px 10px rgba(0,0,0,0.6); position: relative; }
-        .movie-card:hover, .movie-card:active { transform: scale(1.04); box-shadow: 0 8px 25px rgba(229,9,20,0.3); }
-        .card-img { width: 100%; aspect-ratio: 2/3; object-fit: cover; }
-        .continue-badge { position: absolute; top: 8px; right: 8px; background: var(--primary-color); color: white; font-size: 0.7rem; padding: 3px 8px; border-radius: 4px; font-weight: bold; }
-        footer { text-align: center; padding: 30px 20px; color: #666; font-size: 0.85rem; border-top: 1px solid #222; margin-top: 40px; }
-        @media (min-width: 768px) { .movie-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 25px; } }
+        .movie-card { background: var(--card-bg); border-radius: 12px; overflow: hidden; border: 1px solid #222; cursor: pointer; text-align: center; padding-bottom: 10px; }
+        .card-img { width: 100%; aspect-ratio: 2/3; background: #222; display: flex; align-items: center; justify-content: center; color: var(--primary-color); font-weight: bold; }
+        
+        footer { text-align: center; padding: 30px; color: #666; font-size: 0.85rem; }
+        @media (min-width: 768px) { .movie-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); } }
     </style>
 </head>
 <body>
 
     <header>
         <div class="logo">DEXTER<span style="color:var(--primary-color)">HUB</span></div>
-        <div class="language-switcher">
-            <button class="lang-btn active" data-lang="en" onclick="changeLanguage('en')">EN</button>
-            <button class="lang-btn" data-lang="tr" onclick="changeLanguage('tr')">TR</button>
-        </div>
     </header>
 
     <div class="container">
         <section id="player-section">
-            <div class="controls">
-                <button class="btn-back" id="btn-back">← Back</button>
-                <h3 id="display-title" style="margin: 8px 0 0 0; font-size: 1.1rem;">Title</h3>
-            </div>
+            <button class="btn-back" onclick="closePlayer()">← Back to Overview</button>
+            <h3 id="display-title" style="margin-bottom: 15px;">Title</h3>
             <div class="video-container" id="video-root"></div>
         </section>
 
@@ -62,48 +58,56 @@
     <footer>Made with ❤️ by <strong>Weird</strong></footer>
 
     <script>
-        // ... (der Rest des Scripts ist identisch mit der letzten Version – ich habe nur den iframe-Teil angepasst)
+        const contentData = [
+            { id: 1, title: "Dexter", vidId: "1405" },
+            { id: 2, title: "Dexter: Resurrection", vidId: "259909" },
+            { id: 3, title: "Dexter: New Blood", vidId: "131927" },
+            { id: 4, title: "Dexter: Original Sin", vidId: "219937" },
+            { id: 5, title: "Dexter: Early Cuts", vidId: "49530" }
+        ];
 
-        function playContent(index) {
-            const item = contentData[index];
-            const title = currentLang === 'tr' ? item.titleTr : item.titleEn;
+        const mainGrid = document.getElementById('main-grid');
+        const playerSec = document.getElementById('player-section');
+        const homeSec = document.getElementById('home-section');
+        const videoRoot = document.getElementById('video-root');
+        const displayTitle = document.getElementById('display-title');
+
+        function renderGrid() {
+            mainGrid.innerHTML = contentData.map(item => `
+                <div class="movie-card" onclick="playContent('${item.vidId}', '${item.title}')">
+                    <div class="card-img">${item.title}</div>
+                    <p style="margin: 10px 0 0 0; font-size: 0.9rem;">${item.title}</p>
+                </div>
+            `).join('');
+        }
+
+        function playContent(vidId, title) {
             displayTitle.textContent = title;
-
-            lastWatchedId = item.id;
-            localStorage.setItem('dexterLastWatched', lastWatchedId);
-
-            showLoading();
-
-            let embedUrl;
-            if (item.type === "youtube") {
-                embedUrl = `https://www.youtube.com/embed/${item.youtubeId}?autoplay=1&modestbranding=1&rel=0`;
-            } else {
-                embedUrl = `https://www.vidking.net/embed/tv/${item.vidkingId}/1/1?color=e50914&autoPlay=true`;
-                if (item.useSelector) embedUrl += "&nextEpisode=true&episodeSelector=true";
-            }
-
-            setTimeout(() => {
-                videoRoot.innerHTML = `
-                    <iframe 
-                        src="${embedUrl}" 
-                        allowfullscreen 
-                        sandbox="allow-scripts allow-same-origin allow-forms allow-pointer-lock"
-                        referrerpolicy="no-referrer"
-                        allow="autoplay; fullscreen; encrypted-media"
-                    ></iframe>`;
-            }, 600);
-
-            setTimeout(() => {
-                if (videoRoot.querySelector('.loading-overlay')) showError();
-            }, 15000);
+            
+            // WICHTIG: Sandbox wurde erweitert um Popups und Navigation
+            // Ohne allow-top-navigation und allow-popups laden viele Player nicht korrekt.
+            const embedUrl = `https://www.vidking.net/embed/tv/${vidId}/1/1?color=e50914&autoPlay=true&nextEpisode=true&episodeSelector=true`;
+            
+            videoRoot.innerHTML = `
+                <iframe 
+                    src="${embedUrl}" 
+                    allowfullscreen 
+                    sandbox="allow-forms allow-pointer-lock allow-same-origin allow-scripts allow-top-navigation allow-popups allow-popups-to-escape-sandbox"
+                    allow="autoplay; fullscreen">
+                </iframe>`;
 
             homeSec.style.display = 'none';
             playerSec.style.display = 'block';
-            window.scrollTo({top: 0, behavior: 'smooth'});
+            window.scrollTo(0, 0);
         }
 
-        // Rest des Scripts (renderGrid, updateLanguage, etc.) bleibt genau wie in der letzten Version
-        // (kopiere es einfach aus der vorherigen Nachricht oder lass mich wissen, wenn du den vollständigen Code brauchst)
+        function closePlayer() {
+            videoRoot.innerHTML = '';
+            playerSec.style.display = 'none';
+            homeSec.style.display = 'block';
+        }
+
+        renderGrid();
     </script>
 </body>
 </html>
