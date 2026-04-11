@@ -2,12 +2,18 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Dexter Hub">
     
-    <link rel="apple-touch-icon" href="IMG_2311.png">
+    <script>
+        document.write('<link rel="apple-touch-icon" href="IMG_2311.png?v=' + Date.now() + '">');
+    </script>
     
     <title>Dexter Hub</title>
     
@@ -64,26 +70,21 @@
             margin-bottom: 15px; font-weight: bold; width: 100%;
         }
 
-        /* Angepasstes Grid-Layout für Zentrierung */
+        /* Flexbox für das Grid, um Zentrierung der letzten Reihe zu ermöglichen */
         .movie-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); 
+            display: flex;
+            flex-wrap: wrap;
             gap: 15px; 
-            justify-content: center; /* Zentriert die Items horizontal */
+            justify-content: center; /* Zentriert alle Karten in der Reihe */
         }
 
         .movie-card { 
             background: var(--card-bg); border-radius: 12px; overflow: hidden; 
             cursor: pointer; border: 1px solid #222; transition: transform 0.2s;
-            max-width: 200px; /* Verhindert, dass die zentrierte Karte zu groß wird */
-            width: 100%;
-            justify-self: center; /* Zentriert die Karte in ihrer Grid-Zelle */
-        }
-        
-        /* Spezielle Regel für die letzte Karte (Early Cuts) */
-        .movie-card:last-child {
-            grid-column: 1 / -1; /* Nimmt die volle Breite der Reihe ein */
-            margin-top: 10px; /* Kleiner Abstand nach oben */
+            width: calc(50% - 8px); /* Standardgröße für Mobile (2 Spalten) */
+            max-width: 160px; /* Normale Deckel-Größe */
+            flex-grow: 0;
+            flex-shrink: 0;
         }
 
         .movie-card:active { transform: scale(0.95); }
@@ -103,18 +104,12 @@
             font-size: 0.8rem;
             color: #666;
             letter-spacing: 1px;
-            clear: both; /* Stellt sicher, dass der Footer unter dem Grid bleibt */
         }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        /* Mobile Optimierung */
-        @media (max-width: 600px) { 
-            .movie-grid { 
-                grid-template-columns: repeat(2, 1fr); 
-            } 
-            .movie-card {
-                max-width: 100%; /* Auf Mobile volle Breite nutzen */
-            }
+
+        @media (min-width: 600px) {
+            .movie-card { width: 160px; }
         }
     </style>
 </head>
@@ -140,11 +135,18 @@
         </section>
     </div>
 
-    <footer>
-        Made with ❤️ by Weird
-    </footer>
+    <footer>Made with ❤️ by Weird</footer>
 
     <script>
+        (function() {
+            const lastRefresh = sessionStorage.getItem('app_refreshed');
+            const now = Date.now();
+            if (!lastRefresh) {
+                sessionStorage.setItem('app_refreshed', now);
+                window.location.replace(window.location.href.split('?')[0] + '?t=' + now);
+            }
+        })();
+
         const uiTranslations = {
             en: { heading: "Series Collection", back: "← Back to Overview" },
             tr: { heading: "Seri Koleksiyonu", back: "← Genel Bakışa Dön" }
