@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dexter Hub</title>
+    <title>Dexter Hub - Complete Edition</title>
     <style>
         :root { --primary-color: #e50914; --bg-color: #050505; --card-bg: #121212; --text-color: #ffffff; }
         
@@ -12,79 +12,65 @@
             background-color: var(--bg-color); 
             color: var(--text-color); 
             margin: 0; padding: 0;
+            overflow-x: hidden;
             touch-action: manipulation;
         }
 
         header { 
             padding: 15px 20px; 
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(0,0,0,0.9);
-            border-bottom: 1px solid #222;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(0,0,0,0.95); border-bottom: 1px solid #222;
+            position: sticky; top: 0; z-index: 1000;
         }
 
         .logo { font-weight: 900; letter-spacing: 2px; font-size: 1.1rem; }
 
-        .lang-switcher {
-            display: flex;
-            background: #222;
-            padding: 3px;
-            border-radius: 8px;
-        }
-
+        .lang-switcher { display: flex; background: #222; padding: 3px; border-radius: 8px; }
         .lang-btn {
-            background: transparent;
-            color: #888;
-            border: none;
-            padding: 5px 12px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            cursor: pointer;
-            border-radius: 6px;
-            transition: 0.3s;
+            background: transparent; color: #888; border: none; padding: 5px 12px;
+            font-size: 0.8rem; font-weight: bold; cursor: pointer; border-radius: 6px;
         }
-
         .lang-btn.active { background: var(--primary-color); color: white; }
 
         .container { padding: 15px; max-width: 1200px; margin: 0 auto; }
 
+        /* PLAYER SEKTION MIT HOCHFORMAT-LOGIK */
         #player-section { display: none; animation: fadeIn 0.3s ease; }
         
         .video-container { 
-            position: relative; width: 100%; padding-bottom: 65%; 
-            background: #000; border-radius: 8px; overflow: hidden; 
+            position: relative; 
+            width: 100%; 
+            padding-bottom: 150%; /* Standard Hochformat für Mobile */
+            background: #000; 
+            border-radius: 12px; 
+            overflow: hidden; 
+            transition: padding-bottom 0.4s ease;
         }
 
-        @media (min-width: 768px) { .video-container { padding-bottom: 56.25%; } }
+        @media (min-width: 768px) {
+            .video-container { padding-bottom: 56.25%; } /* Desktop bleibt 16:9 */
+        }
 
-        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+        .video-container iframe { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; 
+        }
 
         .btn-back { 
-            background: #222; color: white; border: none; 
-            padding: 10px 18px; border-radius: 8px; cursor: pointer; 
-            margin-bottom: 15px; font-weight: bold; font-size: 0.9rem;
+            background: #222; color: white; border: 1px solid #444; 
+            padding: 12px 20px; border-radius: 8px; cursor: pointer; 
+            margin-bottom: 15px; font-weight: bold; width: 100%;
         }
 
-        h2 { font-size: 1.2rem; margin-bottom: 20px; border-left: 3px solid var(--primary-color); padding-left: 10px; }
+        h2 { font-size: 1.2rem; margin: 10px 0 20px 0; border-left: 3px solid var(--primary-color); padding-left: 10px; }
 
+        /* GRID */
         .movie-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
+        .movie-card { background: var(--card-bg); border-radius: 12px; overflow: hidden; cursor: pointer; border: 1px solid #222; transition: transform 0.2s; }
+        .movie-card:active { transform: scale(0.95); }
+        .card-img { aspect-ratio: 2/3; background: #1a1a1a; display: flex; align-items: center; justify-content: center; color: var(--primary-color); font-weight: bold; text-align: center; padding: 15px; }
+        .card-title { padding: 12px; font-size: 0.85rem; text-align: center; margin: 0; }
 
-        .movie-card { background: var(--card-bg); border-radius: 10px; overflow: hidden; cursor: pointer; border: 1px solid #222; transition: 0.2s; }
-        .movie-card:active { transform: scale(0.96); }
-        
-        .card-img { 
-            aspect-ratio: 2/3; background: #1a1a1a; 
-            display: flex; align-items: center; justify-content: center; 
-            color: var(--primary-color); font-weight: bold; text-align: center; padding: 10px;
-        }
-        .card-title { padding: 10px; font-size: 0.85rem; text-align: center; margin: 0; }
-
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         @media (max-width: 600px) { .movie-grid { grid-template-columns: repeat(2, 1fr); } }
     </style>
 </head>
@@ -111,18 +97,9 @@
     </div>
 
     <script>
-        // Definition der Übersetzungen für die gesamte Seite
         const uiTranslations = {
-            en: {
-                heading: "Series Collection",
-                back: "← Back",
-                loading: "Loading Player..."
-            },
-            tr: {
-                heading: "Seri Koleksiyonu",
-                back: "← Geri Dön",
-                loading: "Oynatıcı Yükleniyor..."
-            }
+            en: { heading: "Series Collection", back: "← Back" },
+            tr: { heading: "Seri Koleksiyonu", back: "← Geri Dön" }
         };
 
         const contentData = [
@@ -136,18 +113,26 @@
         let currentLang = localStorage.getItem('dex_lang') || 'en';
         let activeId = null;
 
+        // --- Watch Progress Tracking (Silent) ---
+        window.addEventListener("message", function (event) {
+            if (event.origin.includes("vidking.net") && activeId) {
+                try {
+                    // Speichert Fortschrittsdaten im Hintergrund
+                    localStorage.setItem(`dex_prog_${activeId}`, JSON.stringify({
+                        updated: new Date().getTime(),
+                        raw: event.data
+                    }));
+                } catch (e) {}
+            }
+        });
+
         function setLanguage(lang) {
             currentLang = lang;
             localStorage.setItem('dex_lang', lang);
-            
-            // UI-Elemente übersetzen
             document.getElementById('text-heading').innerText = uiTranslations[lang].heading;
             document.getElementById('text-back').innerText = uiTranslations[lang].back;
-            
-            // Buttons im Header stylen
             document.getElementById('btn-en').classList.toggle('active', lang === 'en');
             document.getElementById('btn-tr').classList.toggle('active', lang === 'tr');
-            
             renderGrid();
         }
 
@@ -182,7 +167,7 @@
             activeId = null;
         }
 
-        // Startet die Seite mit der gespeicherten Sprache
+        // Start
         setLanguage(currentLang);
     </script>
 </body>
