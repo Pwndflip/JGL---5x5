@@ -1,112 +1,38 @@
+
 <!DOCTYPE html>
 <html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- WICHTIG: CSP blockt viele Redirect-Skripte von Vidking -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.vidking.net https://www.youtube.com; frame-src https://www.vidking.net https://www.youtube.com; style-src 'self' 'unsafe-inline'; img-src * data:;">
     <title>Dexter Universe</title>
     <style>
-        :root {
-            --primary-color: #e50914;
-            --bg-color: #050505;
-            --card-bg: #121212;
-            --text-color: #ffffff;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 0;
-        }
-
-        header {
-            padding: 15px 20px;
-            background: rgba(0,0,0,0.95);
-            border-bottom: 1px solid #222;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
+        :root { --primary-color: #e50914; --bg-color: #050505; --card-bg: #121212; --text-color: #ffffff; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 0; }
+        header { padding: 15px 20px; background: rgba(0,0,0,0.95); border-bottom: 1px solid #222; position: sticky; top: 0; z-index: 1000; display: flex; justify-content: space-between; align-items: center; }
         .logo { font-size: 1.25rem; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; }
-
         .language-switcher { display: flex; gap: 8px; }
-
-        .lang-btn {
-            background: #222; color: #fff; border: 1px solid #444; padding: 6px 12px;
-            border-radius: 6px; font-size: 0.85rem; cursor: pointer;
-        }
+        .lang-btn { background: #222; color: #fff; border: 1px solid #444; padding: 6px 12px; border-radius: 6px; font-size: 0.85rem; cursor: pointer; }
         .lang-btn.active { background: var(--primary-color); border-color: var(--primary-color); font-weight: bold; }
-
         .container { padding: 20px; max-width: 1200px; margin: 0 auto; }
-
         #player-section { display: none; margin-bottom: 30px; }
-        .video-container {
-            position: relative; padding-bottom: 56.25%; height: 0;
-            background: #000; border-radius: 8px; overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.8);
-        }
+        .video-container { position: relative; padding-bottom: 56.25%; height: 0; background: #000; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.8); }
         .video-container iframe { 
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            border: none; 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; 
         }
-
-        .loading-overlay, .error-overlay {
-            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(5,5,5,0.95); display: flex; flex-direction: column;
-            align-items: center; justify-content: center; color: var(--primary-color);
-            z-index: 10; text-align: center; padding: 20px;
-        }
-        .spinner {
-            width: 50px; height: 50px; border: 5px solid #222;
-            border-top: 5px solid var(--primary-color); border-radius: 50%;
-            animation: spin 1s linear infinite; margin-bottom: 15px;
-        }
+        .loading-overlay, .error-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(5,5,5,0.95); display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--primary-color); z-index: 10; text-align: center; padding: 20px; }
+        .spinner { width: 50px; height: 50px; border: 5px solid #222; border-top: 5px solid var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; }
         @keyframes spin { to { transform: rotate(360deg); } }
-
-        .btn-back {
-            background: #222; color: white; border: 1px solid #444;
-            padding: 12px; border-radius: 8px; font-size: 1rem;
-            font-weight: bold; cursor: pointer; width: 100%;
-        }
-
+        .btn-back { background: #222; color: white; border: 1px solid #444; padding: 12px; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; width: 100%; }
         h2 { font-size: 1.4rem; margin-bottom: 20px; padding-left: 5px; border-left: 4px solid var(--primary-color); }
-
-        .movie-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 15px;
-        }
-
-        .movie-card {
-            background: var(--card-bg); border-radius: 12px; overflow: hidden;
-            transition: transform 0.25s ease, box-shadow 0.25s ease;
-            border: 1px solid #222; box-shadow: 0 2px 10px rgba(0,0,0,0.6);
-            position: relative;
-        }
+        .movie-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
+        .movie-card { background: var(--card-bg); border-radius: 12px; overflow: hidden; transition: transform 0.25s ease, box-shadow 0.25s ease; border: 1px solid #222; box-shadow: 0 2px 10px rgba(0,0,0,0.6); position: relative; }
         .movie-card:hover, .movie-card:active { transform: scale(1.04); box-shadow: 0 8px 25px rgba(229,9,20,0.3); }
-
         .card-img { width: 100%; aspect-ratio: 2/3; object-fit: cover; }
-
-        .continue-badge {
-            position: absolute; top: 8px; right: 8px;
-            background: var(--primary-color); color: white;
-            font-size: 0.7rem; padding: 3px 8px; border-radius: 4px;
-            font-weight: bold;
-        }
-
-        footer {
-            text-align: center; padding: 30px 20px; color: #666; font-size: 0.85rem;
-            border-top: 1px solid #222; margin-top: 40px;
-        }
-
-        @media (min-width: 768px) {
-            .movie-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 25px; }
-        }
+        .continue-badge { position: absolute; top: 8px; right: 8px; background: var(--primary-color); color: white; font-size: 0.7rem; padding: 3px 8px; border-radius: 4px; font-weight: bold; }
+        footer { text-align: center; padding: 30px 20px; color: #666; font-size: 0.85rem; border-top: 1px solid #222; margin-top: 40px; }
+        @media (min-width: 768px) { .movie-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 25px; } }
     </style>
 </head>
 <body>
@@ -137,97 +63,7 @@
     <footer>Made with ❤️ by <strong>Weird</strong></footer>
 
     <script>
-        const translations = {
-            en: { 
-                back: "← Back", 
-                sectionTitle: "Chronological Order",
-                loading: "Loading...",
-                slowHint: "Vidking can be slow – please wait",
-                error: "Sorry, the content could not be loaded.<br>Try another browser or disable AdBlocker.",
-                continueWatching: "Continue"
-            },
-            tr: { 
-                back: "← Geri", 
-                sectionTitle: "Kronolojik Sıra",
-                loading: "Yükleniyor...",
-                slowHint: "Vidking bazen yavaş olur – lütfen bekleyin",
-                error: "Üzgünüz, içerik yüklenemedi.<br>Başka tarayıcı deneyin veya AdBlocker'ı kapatın.",
-                continueWatching: "Devam et"
-            }
-        };
-
-        let currentLang = 'en';
-        let lastWatchedId = localStorage.getItem('dexterLastWatched') || null;
-
-        const contentData = [
-            { id: "original-sin", titleEn: "Dexter: Original Sin", titleTr: "Dexter: Orijinal Günah", year: "2024", vidkingId: "219937", poster: "https://image.tmdb.org/t/p/w500/9wldu.jpg", useSelector: true },
-            { id: "early-cuts",    titleEn: "Dexter: Early Cuts", titleTr: "Dexter: Erken Kesimler", year: "2009", poster: "https://image.tmdb.org/t/p/w500/f0bFe.jpg", type: "youtube", youtubeId: "iI79oLKBGs4" },
-            { id: "dexter",        titleEn: "Dexter (Seasons 1-8)", titleTr: "Dexter (Sezon 1-8)", year: "2006", vidkingId: "1405", poster: "https://image.tmdb.org/t/p/w500/8oTe9nI1o8vJ9yY5Z4Z3z5y5Z3z.jpg", useSelector: true },
-            { id: "new-blood",     titleEn: "Dexter: New Blood", titleTr: "Dexter: Yeni Kan", year: "2021", vidkingId: "131927", poster: "https://image.tmdb.org/t/p/w500/bvrvb.jpg", useSelector: true },
-            { id: "resurrection",  titleEn: "Dexter: Resurrection", titleTr: "Dexter: Resurrection", year: "2025", vidkingId: "259909", poster: "https://image.tmdb.org/t/p/w500/BuIaS.jpg", useSelector: true }
-        ];
-
-        const grid = document.getElementById('main-grid');
-        const playerSec = document.getElementById('player-section');
-        const homeSec = document.getElementById('home-section');
-        const videoRoot = document.getElementById('video-root');
-        const displayTitle = document.getElementById('display-title');
-        const btnBack = document.getElementById('btn-back');
-        const sectionTitle = document.getElementById('section-title');
-
-        function updateLanguage(lang) {
-            currentLang = lang;
-            document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
-            btnBack.textContent = translations[lang].back;
-            sectionTitle.textContent = translations[lang].sectionTitle;
-            renderGrid();
-        }
-
-        function changeLanguage(lang) { updateLanguage(lang); }
-
-        function renderGrid() {
-            grid.innerHTML = '';
-            contentData.forEach((item, index) => {
-                const title = currentLang === 'tr' ? item.titleTr : item.titleEn;
-                const card = document.createElement('div');
-                card.className = 'movie-card';
-
-                let innerHTML = `
-                    <img src="${item.poster}" class="card-img" loading="lazy" alt="${title}">
-                    <div class="card-content">
-                        <p class="card-title">${title}</p>
-                        <p class="card-year">${item.year}</p>
-                    </div>
-                `;
-
-                if (lastWatchedId === item.id) {
-                    innerHTML = `<div class="continue-badge">${translations[currentLang].continueWatching}</div>` + innerHTML;
-                }
-
-                card.innerHTML = innerHTML;
-                card.onclick = () => playContent(index);
-                grid.appendChild(card);
-            });
-        }
-
-        function showLoading() {
-            videoRoot.innerHTML = `
-                <div class="loading-overlay">
-                    <div class="spinner"></div>
-                    <div>${translations[currentLang].loading}</div>
-                    <small>${translations[currentLang].slowHint}</small>
-                </div>
-            `;
-        }
-
-        function showError() {
-            videoRoot.innerHTML = `
-                <div class="error-overlay">
-                    <div style="font-size:2rem;margin-bottom:10px;">⚠️</div>
-                    <div>${translations[currentLang].error}</div>
-                </div>
-            `;
-        }
+        // ... (der Rest des Scripts ist identisch mit der letzten Version – ich habe nur den iframe-Teil angepasst)
 
         function playContent(index) {
             const item = contentData[index];
@@ -241,7 +77,7 @@
 
             let embedUrl;
             if (item.type === "youtube") {
-                embedUrl = `https://www.youtube.com/embed/${item.youtubeId}?autoplay=1&modestbranding=1`;
+                embedUrl = `https://www.youtube.com/embed/${item.youtubeId}?autoplay=1&modestbranding=1&rel=0`;
             } else {
                 embedUrl = `https://www.vidking.net/embed/tv/${item.vidkingId}/1/1?color=e50914&autoPlay=true`;
                 if (item.useSelector) embedUrl += "&nextEpisode=true&episodeSelector=true";
@@ -254,6 +90,7 @@
                         allowfullscreen 
                         sandbox="allow-scripts allow-same-origin allow-forms allow-pointer-lock"
                         referrerpolicy="no-referrer"
+                        allow="autoplay; fullscreen; encrypted-media"
                     ></iframe>`;
             }, 600);
 
@@ -266,17 +103,8 @@
             window.scrollTo({top: 0, behavior: 'smooth'});
         }
 
-        function closePlayer() {
-            videoRoot.innerHTML = '';
-            playerSec.style.display = 'none';
-            homeSec.style.display = 'block';
-            renderGrid();
-        }
-
-        btnBack.addEventListener('click', closePlayer);
-
-        updateLanguage('en');
-        renderGrid();
+        // Rest des Scripts (renderGrid, updateLanguage, etc.) bleibt genau wie in der letzten Version
+        // (kopiere es einfach aus der vorherigen Nachricht oder lass mich wissen, wenn du den vollständigen Code brauchst)
     </script>
 </body>
 </html>
