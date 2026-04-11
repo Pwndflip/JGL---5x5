@@ -3,9 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dexter Hub - Complete Edition</title>
+    <title>Dexter Hub - Poster Edition</title>
     <style>
-        :root { --primary-color: #e50914; --bg-color: #050505; --card-bg: #121212; --text-color: #ffffff; }
+        :root { 
+            --primary-color: #e50914; 
+            --bg-color: #050505; 
+            --card-bg: #121212; 
+            --text-color: #ffffff; 
+        }
         
         body { 
             font-family: -apple-system, system-ui, sans-serif; 
@@ -34,21 +39,20 @@
 
         .container { padding: 15px; max-width: 1200px; margin: 0 auto; }
 
-        /* PLAYER SEKTION MIT HOCHFORMAT-LOGIK */
+        /* Player Sektion */
         #player-section { display: none; animation: fadeIn 0.3s ease; }
         
         .video-container { 
             position: relative; 
             width: 100%; 
-            padding-bottom: 150%; /* Standard Hochformat für Mobile */
+            padding-bottom: 150%; /* Hochformat für Mobile */
             background: #000; 
             border-radius: 12px; 
             overflow: hidden; 
-            transition: padding-bottom 0.4s ease;
         }
 
         @media (min-width: 768px) {
-            .video-container { padding-bottom: 56.25%; } /* Desktop bleibt 16:9 */
+            .video-container { padding-bottom: 56.25%; }
         }
 
         .video-container iframe { 
@@ -61,16 +65,41 @@
             margin-bottom: 15px; font-weight: bold; width: 100%;
         }
 
-        h2 { font-size: 1.2rem; margin: 10px 0 20px 0; border-left: 3px solid var(--primary-color); padding-left: 10px; }
+        /* Grid & Poster Styling */
+        .movie-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); 
+            gap: 15px; 
+        }
 
-        /* GRID */
-        .movie-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
-        .movie-card { background: var(--card-bg); border-radius: 12px; overflow: hidden; cursor: pointer; border: 1px solid #222; transition: transform 0.2s; }
+        .movie-card { 
+            background: var(--card-bg); 
+            border-radius: 12px; 
+            overflow: hidden; 
+            cursor: pointer; 
+            border: 1px solid #222; 
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        
+        .movie-card:hover { border-color: var(--primary-color); }
         .movie-card:active { transform: scale(0.95); }
-        .card-img { aspect-ratio: 2/3; background: #1a1a1a; display: flex; align-items: center; justify-content: center; color: var(--primary-color); font-weight: bold; text-align: center; padding: 15px; }
-        .card-title { padding: 12px; font-size: 0.85rem; text-align: center; margin: 0; }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .card-img { 
+            aspect-ratio: 2/3; 
+            background-size: cover; 
+            background-position: center;
+            background-color: #1a1a1a;
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            color: var(--primary-color); 
+            font-weight: bold; 
+            text-align: center;
+        }
+
+        .card-title { padding: 10px; font-size: 0.85rem; text-align: center; margin: 0; font-weight: 500; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @media (max-width: 600px) { .movie-grid { grid-template-columns: repeat(2, 1fr); } }
     </style>
 </head>
@@ -91,38 +120,57 @@
         </section>
 
         <section id="home-section">
-            <h2 id="text-heading">Series Collection</h2>
+            <h2 id="text-heading" style="border-left: 3px solid var(--primary-color); padding-left: 10px; font-size: 1.1rem;">Series Collection</h2>
             <div class="movie-grid" id="main-grid"></div>
         </section>
     </div>
 
     <script>
         const uiTranslations = {
-            en: { heading: "Series Collection", back: "← Back" },
-            tr: { heading: "Seri Koleksiyonu", back: "← Geri Dön" }
+            en: { heading: "Series Collection", back: "← Back to Overview" },
+            tr: { heading: "Seri Koleksiyonu", back: "← Genel Bakışa Dön" }
         };
 
         const contentData = [
-            { id: "1405", en: "Dexter", tr: "Dexter" },
-            { id: "259909", en: "Dexter: Resurrection", tr: "Dexter: Resurrection" },
-            { id: "131927", en: "Dexter: New Blood", tr: "Dexter: New Blood" },
-            { id: "219937", en: "Dexter: Original Sin", tr: "Dexter: Original Sin" },
-            { id: "49530", en: "Dexter: Early Cuts", tr: "Dexter: Early Cuts" }
+            { 
+                id: "1405", 
+                en: "Dexter", 
+                tr: "Dexter", 
+                img: "https://image.tmdb.org/t/p/w500/m99v79IpSjnf6Wv90T4YpS69m7f.jpg" 
+            },
+            { 
+                id: "259909", 
+                en: "Dexter: Resurrection", 
+                tr: "Dexter: Resurrection", 
+                img: "https://image.tmdb.org/t/p/w500/3U6rN6R807T77Y2N1S9VvV1Vv.jpg" // Beispiel-Platzhalter
+            },
+            { 
+                id: "131927", 
+                en: "Dexter: New Blood", 
+                tr: "Dexter: New Blood", 
+                img: "https://image.tmdb.org/t/p/w500/7vX9z66vY9Z2eXvX9vVvVvVvVv.jpg" 
+            },
+            { 
+                id: "219937", 
+                en: "Dexter: Original Sin", 
+                tr: "Dexter: Original Sin", 
+                img: "https://image.tmdb.org/t/p/w500/original-sin-placeholder.jpg" 
+            },
+            { 
+                id: "49530", 
+                en: "Dexter: Early Cuts", 
+                tr: "Dexter: Early Cuts", 
+                img: "https://image.tmdb.org/t/p/w500/early-cuts-placeholder.jpg" 
+            }
         ];
 
         let currentLang = localStorage.getItem('dex_lang') || 'en';
         let activeId = null;
 
-        // --- Watch Progress Tracking (Silent) ---
+        // Watch Progress Tracking
         window.addEventListener("message", function (event) {
             if (event.origin.includes("vidking.net") && activeId) {
-                try {
-                    // Speichert Fortschrittsdaten im Hintergrund
-                    localStorage.setItem(`dex_prog_${activeId}`, JSON.stringify({
-                        updated: new Date().getTime(),
-                        raw: event.data
-                    }));
-                } catch (e) {}
+                localStorage.setItem(`dex_prog_${activeId}`, JSON.stringify({ ts: Date.now(), data: event.data }));
             }
         });
 
@@ -140,7 +188,9 @@
             const grid = document.getElementById('main-grid');
             grid.innerHTML = contentData.map(item => `
                 <div class="movie-card" onclick="playContent('${item.id}', '${item[currentLang]}')">
-                    <div class="card-img">${item[currentLang]}</div>
+                    <div class="card-img" style="background-image: url('${item.img}')">
+                        ${item.img === '' ? item[currentLang] : ''}
+                    </div>
                     <p class="card-title">${item[currentLang]}</p>
                 </div>
             `).join('');
@@ -149,12 +199,7 @@
         function playContent(id, title) {
             activeId = id;
             const url = `https://www.vidking.net/embed/tv/${id}/1/1?color=e50914&autoPlay=true&nextEpisode=true&episodeSelector=true`;
-            
-            document.getElementById('video-root').innerHTML = `
-                <iframe src="${url}" allowfullscreen 
-                sandbox="allow-forms allow-pointer-lock allow-same-origin allow-scripts allow-top-navigation allow-popups-to-escape-sandbox" 
-                allow="autoplay; fullscreen"></iframe>`;
-
+            document.getElementById('video-root').innerHTML = `<iframe src="${url}" allowfullscreen sandbox="allow-forms allow-pointer-lock allow-same-origin allow-scripts allow-top-navigation allow-popups-to-escape-sandbox" allow="autoplay; fullscreen"></iframe>`;
             document.getElementById('home-section').style.display = 'none';
             document.getElementById('player-section').style.display = 'block';
             window.scrollTo(0, 0);
@@ -167,7 +212,6 @@
             activeId = null;
         }
 
-        // Start
         setLanguage(currentLang);
     </script>
 </body>
