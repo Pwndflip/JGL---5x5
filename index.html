@@ -70,21 +70,25 @@
             margin-bottom: 15px; font-weight: bold; width: 100%;
         }
 
-        /* Flexbox für das Grid, um Zentrierung der letzten Reihe zu ermöglichen */
+        /* Zurück zum Grid für exakt gleiche Größen */
         .movie-grid { 
-            display: flex;
-            flex-wrap: wrap;
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); /* Immer 2 Spalten auf Mobile */
             gap: 15px; 
-            justify-content: center; /* Zentriert alle Karten in der Reihe */
+            justify-items: center;
         }
 
         .movie-card { 
             background: var(--card-bg); border-radius: 12px; overflow: hidden; 
             cursor: pointer; border: 1px solid #222; transition: transform 0.2s;
-            width: calc(50% - 8px); /* Standardgröße für Mobile (2 Spalten) */
-            max-width: 160px; /* Normale Deckel-Größe */
-            flex-grow: 0;
-            flex-shrink: 0;
+            width: 100%;
+            max-width: 170px; /* Hier stellst du die Standardgröße ein */
+        }
+
+        /* Early Cuts (das 5. Element) wird mittig in der neuen Zeile platziert */
+        .movie-card:last-child {
+            grid-column: 1 / span 2; /* Erstreckt sich über beide Spalten */
+            max-width: 170px; /* Bleibt aber trotzdem klein/normal */
         }
 
         .movie-card:active { transform: scale(0.95); }
@@ -108,8 +112,14 @@
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
+        /* Für größere Bildschirme (Tablets/PC) */
         @media (min-width: 600px) {
-            .movie-card { width: 160px; }
+            .movie-grid { 
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); 
+            }
+            .movie-card:last-child {
+                grid-column: auto; /* Auf PC wieder normal einreihen */
+            }
         }
     </style>
 </head>
@@ -136,6 +146,7 @@
     </div>
 
     <footer>Made with ❤️ by Weird</footer>
+    <footer>V1 (Stable)</footer>
 
     <script>
         (function() {
