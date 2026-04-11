@@ -20,7 +20,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: #000;
+            background: rgba(0,0,0,0.9);
             border-bottom: 1px solid #222;
             position: sticky;
             top: 0;
@@ -29,7 +29,6 @@
 
         .logo { font-weight: 900; letter-spacing: 2px; font-size: 1.1rem; }
 
-        /* Sprach-Umschalter Styling */
         .lang-switcher {
             display: flex;
             background: #222;
@@ -49,10 +48,7 @@
             transition: 0.3s;
         }
 
-        .lang-btn.active {
-            background: var(--primary-color);
-            color: white;
-        }
+        .lang-btn.active { background: var(--primary-color); color: white; }
 
         .container { padding: 15px; max-width: 1200px; margin: 0 auto; }
 
@@ -61,7 +57,6 @@
         .video-container { 
             position: relative; width: 100%; padding-bottom: 65%; 
             background: #000; border-radius: 8px; overflow: hidden; 
-            box-shadow: 0 4px 25px rgba(0,0,0,0.9);
         }
 
         @media (min-width: 768px) { .video-container { padding-bottom: 56.25%; } }
@@ -70,13 +65,16 @@
 
         .btn-back { 
             background: #222; color: white; border: none; 
-            padding: 12px 20px; border-radius: 8px; cursor: pointer; 
-            margin-bottom: 15px; font-weight: bold;
+            padding: 10px 18px; border-radius: 8px; cursor: pointer; 
+            margin-bottom: 15px; font-weight: bold; font-size: 0.9rem;
         }
+
+        h2 { font-size: 1.2rem; margin-bottom: 20px; border-left: 3px solid var(--primary-color); padding-left: 10px; }
 
         .movie-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
 
-        .movie-card { background: var(--card-bg); border-radius: 10px; overflow: hidden; cursor: pointer; border: 1px solid #222; }
+        .movie-card { background: var(--card-bg); border-radius: 10px; overflow: hidden; cursor: pointer; border: 1px solid #222; transition: 0.2s; }
+        .movie-card:active { transform: scale(0.96); }
         
         .card-img { 
             aspect-ratio: 2/3; background: #1a1a1a; 
@@ -95,23 +93,38 @@
     <header>
         <div class="logo">DEXTER<span style="color:var(--primary-color)">HUB</span></div>
         <div class="lang-switcher">
-            <button class="lang-btn active" id="btn-en" onclick="setLanguage('en')">EN</button>
+            <button class="lang-btn" id="btn-en" onclick="setLanguage('en')">EN</button>
             <button class="lang-btn" id="btn-tr" onclick="setLanguage('tr')">TR</button>
         </div>
     </header>
 
     <div class="container">
         <section id="player-section">
-            <button class="btn-back" onclick="closePlayer()">←</button>
+            <button class="btn-back" id="text-back" onclick="closePlayer()">← Back</button>
             <div class="video-container" id="video-root"></div>
         </section>
 
         <section id="home-section">
+            <h2 id="text-heading">Series Collection</h2>
             <div class="movie-grid" id="main-grid"></div>
         </section>
     </div>
 
     <script>
+        // Definition der Übersetzungen für die gesamte Seite
+        const uiTranslations = {
+            en: {
+                heading: "Series Collection",
+                back: "← Back",
+                loading: "Loading Player..."
+            },
+            tr: {
+                heading: "Seri Koleksiyonu",
+                back: "← Geri Dön",
+                loading: "Oynatıcı Yükleniyor..."
+            }
+        };
+
         const contentData = [
             { id: "1405", en: "Dexter", tr: "Dexter" },
             { id: "259909", en: "Dexter: Resurrection", tr: "Dexter: Resurrection" },
@@ -127,14 +140,18 @@
             currentLang = lang;
             localStorage.setItem('dex_lang', lang);
             
-            // Buttons aktualisieren
+            // UI-Elemente übersetzen
+            document.getElementById('text-heading').innerText = uiTranslations[lang].heading;
+            document.getElementById('text-back').innerText = uiTranslations[lang].back;
+            
+            // Buttons im Header stylen
             document.getElementById('btn-en').classList.toggle('active', lang === 'en');
             document.getElementById('btn-tr').classList.toggle('active', lang === 'tr');
             
-            init(); // Grid neu zeichnen
+            renderGrid();
         }
 
-        function init() {
+        function renderGrid() {
             const grid = document.getElementById('main-grid');
             grid.innerHTML = contentData.map(item => `
                 <div class="movie-card" onclick="playContent('${item.id}', '${item[currentLang]}')">
@@ -165,7 +182,7 @@
             activeId = null;
         }
 
-        // Initialisierung beim Laden
+        // Startet die Seite mit der gespeicherten Sprache
         setLanguage(currentLang);
     </script>
 </body>
