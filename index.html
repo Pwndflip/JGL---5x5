@@ -1,213 +1,283 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
+  <meta charset="UTF-8">
+  <title>LVLRY-BUYS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Dexter Hub">
-    
-    <script>
-        document.write('<link rel="apple-touch-icon" href="IMG_2311.png?v=' + Date.now() + '">');
-    </script>
-    
-    <title>Dexter Hub</title>
-    
-    <style>
-        :root { 
-            --primary-color: #e50914; 
-            --bg-color: #050505; 
-            --card-bg: #121212; 
-            --text-color: #ffffff; 
-        }
-        
-        body { 
-            font-family: -apple-system, system-ui, sans-serif; 
-            background-color: var(--bg-color); 
-            color: var(--text-color); 
-            margin: 0; padding: 0;
-            overflow-x: hidden;
-            overscroll-behavior-y: contain;
-            touch-action: manipulation;
-        }
+    body {
+      background: #000;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+    }
 
-        header { 
-            padding: env(safe-area-inset-top) 20px 15px 20px; 
-            display: flex; justify-content: space-between; align-items: center;
-            background: rgba(0,0,0,0.95); border-bottom: 1px solid #222;
-            position: sticky; top: 0; z-index: 1000;
-        }
+    .page {
+      max-width: 900px;
+      width: 100%;
+      animation: fadeInUp 0.7s ease-out both;
+    }
 
-        .logo { font-weight: 900; letter-spacing: 2px; font-size: 1.1rem; }
+    /* CARD */
+    .ad-card {
+      background: #0a0a0a;
+      border-radius: 8px;
+      box-shadow: 0 0 25px rgba(255,255,255,0.05);
+      padding: 18px;
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr);
+      gap: 22px;
+      border: 1px solid #1a1a1a;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
 
-        .lang-switcher { display: flex; background: #222; padding: 3px; border-radius: 8px; }
-        .lang-btn {
-            background: transparent; color: #888; border: none; padding: 5px 12px;
-            font-size: 0.8rem; font-weight: bold; cursor: pointer; border-radius: 6px;
-        }
-        .lang-btn.active { background: var(--primary-color); color: white; }
+    .ad-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 0 35px rgba(255,255,255,0.15);
+    }
 
-        .container { padding: 15px; max-width: 1200px; margin: 0 auto; min-height: 80vh; }
+    /* MAIN IMAGE – jetzt wieder 1:1 */
+    .gallery-main {
+      overflow: hidden;
+      border-radius: 8px;
+      border: 2px solid #fff;
+      background: #000;
+      aspect-ratio: 1 / 1; /* QUADRATISCH WIE VORHER */
+    }
 
-        #player-section { display: none; animation: fadeIn 0.3s ease; }
-        
-        .video-container { 
-            position: relative; width: 100%; padding-bottom: 160%; 
-            background: #000; border-radius: 12px; overflow: hidden; 
-        }
+    #mainImage {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: opacity 0.2s ease;
+    }
 
-        @media (min-width: 768px) { .video-container { padding-bottom: 56.25%; } }
+    /* THUMBNAILS */
+    .thumbs {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
 
-        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+    .thumbs img {
+      width: 75px;
+      height: 75px;
+      object-fit: cover;
+      border-radius: 4px;
+      border: 1px solid #fff;
+      cursor: pointer;
+      transition: transform 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease;
+    }
 
-        .btn-back { 
-            background: #222; color: white; border: 1px solid #444; 
-            padding: 12px 20px; border-radius: 8px; cursor: pointer; 
-            margin-bottom: 15px; font-weight: bold; width: 100%;
-        }
+    .thumbs img:hover {
+      opacity: 0.7;
+      transform: scale(1.07);
+    }
 
-        /* Zurück zum Grid für exakt gleiche Größen */
-        .movie-grid { 
-            display: grid; 
-            grid-template-columns: repeat(2, 1fr); /* Immer 2 Spalten auf Mobile */
-            gap: 15px; 
-            justify-items: center;
-        }
+    .thumbs img.active-thumb {
+      box-shadow: 0 0 15px rgba(255,255,255,0.9);
+    }
 
-        .movie-card { 
-            background: var(--card-bg); border-radius: 12px; overflow: hidden; 
-            cursor: pointer; border: 1px solid #222; transition: transform 0.2s;
-            width: 100%;
-            max-width: 170px; /* Hier stellst du die Standardgröße ein */
-        }
+    /* TEXT SECTION */
+    .logo-badge {
+      display: inline-block;
+      font-size: 0.9rem;
+      font-weight: 900;
+      letter-spacing: 2px;
+      color: #fff;
+      margin-bottom: 12px;
+      animation: logoPulse 1.8s infinite alternate;
+    }
 
-        /* Early Cuts (das 5. Element) wird mittig in der neuen Zeile platziert */
-        .movie-card:last-child {
-            grid-column: 1 / span 2; /* Erstreckt sich über beide Spalten */
-            max-width: 170px; /* Bleibt aber trotzdem klein/normal */
-        }
+    h1 {
+      color: #fff;
+      font-size: 2rem;
+      font-weight: 900;
+      margin-bottom: 10px;
+    }
 
-        .movie-card:active { transform: scale(0.95); }
+    .price {
+      color: #fff;
+      font-size: 2.2rem;
+      font-weight: 900;
+      margin-bottom: 16px;
+    }
 
-        .card-img { 
-            aspect-ratio: 2/3; 
-            background-size: cover; 
-            background-position: center;
-            background-color: #1a1a1a;
-        }
+    .meta {
+      color: #aaa;
+      font-size: 0.85rem;
+      margin-bottom: 18px;
+    }
 
-        .card-title { padding: 10px; font-size: 0.85rem; text-align: center; margin: 0; font-weight: 500; }
+    .description-title {
+      color: #fff;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
 
-        footer {
-            text-align: center;
-            padding: 40px 20px;
-            font-size: 0.8rem;
-            color: #666;
-            letter-spacing: 1px;
-        }
+    .description {
+      color: #ccc;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .details-list {
+      list-style: none;
+      color: #ccc;
+      margin-bottom: 26px;
+    }
 
-        /* Für größere Bildschirme (Tablets/PC) */
-        @media (min-width: 600px) {
-            .movie-grid { 
-                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); 
-            }
-            .movie-card:last-child {
-                grid-column: auto; /* Auf PC wieder normal einreihen */
-            }
-        }
-    </style>
+    .btn-primary {
+      background: #fff;
+      color: #000;
+      padding: 12px 20px;
+      border-radius: 6px;
+      font-weight: 800;
+      text-align: center;
+      display: block;
+      text-decoration: none;
+      box-shadow: 0 0 12px rgba(255,255,255,0.4);
+      transition: 0.25s ease;
+    }
+
+    .btn-primary:hover {
+      transform: scale(1.03);
+      box-shadow: 0 0 22px rgba(255,255,255,0.9);
+    }
+
+    /* MOBILE */
+    @media (max-width: 720px) {
+      .ad-card {
+        grid-template-columns: 1fr;
+        padding: 14px;
+        gap: 16px;
+      }
+
+      h1 {
+        font-size: 1.7rem;
+      }
+
+      .price {
+        font-size: 1.8rem;
+      }
+
+      .thumbs img {
+        width: 30%;
+        height: auto;
+        max-width: 110px;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-    <header>
-        <div class="logo">DEXTER<span style="color:var(--primary-color)">HUB</span></div>
-        <div class="lang-switcher">
-            <button class="lang-btn" id="btn-en" onclick="setLanguage('en')">EN</button>
-            <button class="lang-btn" id="btn-tr" onclick="setLanguage('tr')">TR</button>
+  <div class="page">
+
+    <main class="ad-card">
+
+      <!-- IMAGE SECTION -->
+      <section>
+        <div class="gallery-main">
+          <img id="mainImage" src="IMG_4609.jpeg">
         </div>
-    </header>
 
-    <div class="container">
-        <section id="player-section">
-            <button class="btn-back" id="text-back" onclick="closePlayer()">← Back</button>
-            <div class="video-container" id="video-root"></div>
-        </section>
+        <div class="thumbs">
+          <img src="IMG_4609.jpeg" class="active-thumb">
+          <img src="IMG_4611.jpeg">
+          <img src="IMG_4612.jpeg">
+          <img src="IMG_4631.jpeg">
+          <img src="IMG_4632.jpeg">
+          <img src="IMG_4633.jpeg">
+        </div>
+      </section>
 
-        <section id="home-section">
-            <h2 id="text-heading" style="border-left: 3px solid var(--primary-color); padding-left: 10px; font-size: 1.1rem; margin-bottom: 20px;">Series Collection</h2>
-            <div class="movie-grid" id="main-grid"></div>
-        </section>
-    </div>
+      <!-- TEXT SECTION -->
+      <section class="ad-info">
 
-    <footer>Made with ❤️ by Weird</footer>
-    <footer>V1 (Stable)</footer>
+        <div class="logo-badge">LVLRY-BUYS</div>
 
-    <script>
-        (function() {
-            const lastRefresh = sessionStorage.getItem('app_refreshed');
-            const now = Date.now();
-            if (!lastRefresh) {
-                sessionStorage.setItem('app_refreshed', now);
-                window.location.replace(window.location.href.split('?')[0] + '?t=' + now);
-            }
-        })();
+        <h1>LV SKATES</h1>
+        <div class="price">49,99 €</div>
 
-        const uiTranslations = {
-            en: { heading: "Series Collection", back: "← Back to Overview" },
-            tr: { heading: "Seri Koleksiyonu", back: "← Genel Bakışa Dön" }
-        };
+        <div class="meta">Heute · Versand möglich</div>
 
-        const contentData = [
-            { id: "1405", en: "Dexter", tr: "Dexter", img: "IMG_2304.jpeg" },
-            { id: "259909", en: "Dexter: Resurrection", tr: "Dexter: Resurrection", img: "IMG_2305.jpeg" },
-            { id: "131927", en: "Dexter: New Blood", tr: "Dexter: New Blood", img: "IMG_2306.jpeg" },
-            { id: "219937", en: "Dexter: Original Sin", tr: "Dexter: Original Sin", img: "IMG_2307.jpeg" },
-            { id: "49530", en: "Dexter: Early Cuts", tr: "Dexter: Early Cuts", img: "IMG_2308.jpeg" }
-        ];
+        <div class="description-title">Beschreibung</div>
+        <p class="description">
+          LVSkates, Gute Quali, Gutes Gefühl. Hol sie ab, schreib mir über Instagram
+          für mehr Details, Farben und Größen.
+        </p>
 
-        let currentLang = localStorage.getItem('dex_lang') || 'en';
+        <ul class="details-list">
+          <li><strong>Größen:</strong> 36–46</li>
+          <li><strong>Farben:</strong> 36 Farben</li>
+          <li><strong>Qualität:</strong> Sehr gut</li>
+          <li><strong>Lieferung:</strong> 4–5 Wochen</li>
+        </ul>
 
-        function setLanguage(lang) {
-            currentLang = lang;
-            localStorage.setItem('dex_lang', lang);
-            document.getElementById('text-heading').innerText = uiTranslations[lang].heading;
-            document.getElementById('text-back').innerText = uiTranslations[lang].back;
-            document.getElementById('btn-en').classList.toggle('active', lang === 'en');
-            document.getElementById('btn-tr').classList.toggle('active', lang === 'tr');
-            renderGrid();
-        }
+        <a class="btn-primary" href="https://www.instagram.com/sellzlvlby" target="_blank">
+          Kontakt über Instagram
+        </a>
 
-        function renderGrid() {
-            const grid = document.getElementById('main-grid');
-            grid.innerHTML = contentData.map(item => `
-                <div class="movie-card" onclick="playContent('${item.id}', '${item[currentLang]}')">
-                    <div class="card-img" style="background-image: url('${item.img}')"></div>
-                    <p class="card-title">${item[currentLang]}</p>
-                </div>
-            `).join('');
-        }
+      </section>
 
-        function playContent(id, title) {
-            const url = `https://www.vidking.net/embed/tv/${id}/1/1?color=e50914&autoPlay=true&nextEpisode=true&episodeSelector=true`;
-            document.getElementById('video-root').innerHTML = `<iframe src="${url}" allowfullscreen sandbox="allow-forms allow-pointer-lock allow-same-origin allow-scripts allow-top-navigation allow-popups-to-escape-sandbox" allow="autoplay; fullscreen"></iframe>`;
-            document.getElementById('home-section').style.display = 'none';
-            document.getElementById('player-section').style.display = 'block';
-            window.scrollTo(0, 0);
-        }
+    </main>
 
-        function closePlayer() {
-            document.getElementById('video-root').innerHTML = '';
-            document.getElementById('player-section').style.display = 'none';
-            document.getElementById('home-section').style.display = 'block';
-        }
+  </div>
 
-        setLanguage(currentLang);
-    </script>
+  <script>
+    const mainImage = document.getElementById("mainImage");
+    const thumbs = document.querySelectorAll(".thumbs img");
+
+    let currentIndex = 0;
+    let autoSlide;
+
+    function switchToImage(index) {
+      const selected = thumbs[index];
+      if (!selected) return;
+
+      mainImage.style.opacity = 0;
+      setTimeout(() => {
+        mainImage.src = selected.src;
+        mainImage.style.opacity = 1;
+      }, 180);
+
+      thumbs.forEach(t => t.classList.remove("active-thumb"));
+      selected.classList.add("active-thumb");
+
+      currentIndex = index;
+    }
+
+    thumbs.forEach((thumb, index) => {
+      thumb.addEventListener("click", () => {
+        stopAutoSlide();
+        switchToImage(index);
+        startAutoSlide();
+      });
+    });
+
+    function startAutoSlide() {
+      autoSlide = setInterval(() => {
+        currentIndex = (currentIndex + 1) % thumbs.length;
+        switchToImage(currentIndex);
+      }, 5000);
+    }
+
+    function stopAutoSlide() {
+      clearInterval(autoSlide);
+    }
+
+    switchToImage(0);
+    startAutoSlide();
+  </script>
+
 </body>
 </html>
