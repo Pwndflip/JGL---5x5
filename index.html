@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Zeitschleife</title>
+<style>
+:root{--bg:#090b15;--card:#131728;--line:#262c4a;--tx:#e9ebf8;--mu:#8b91b6;--v:#8b5cf6;--c:#22d3ee;--r:#fb7185}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none}
+html,body{height:100%;margin:0}
+body{background:radial-gradient(800px 460px at 50% -8%,#231552,var(--bg));color:var(--tx);font:16px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+.scr{display:none;min-height:100%;padding:20px;flex-direction:column;align-items:center;justify-content:center;gap:12px;max-width:460px;margin:0 auto;text-align:center}
+.scr.on{display:flex}
+h1{font-size:46px;line-height:1;letter-spacing:1px;margin:0 0 4px;background:linear-gradient(90deg,var(--c),var(--v) 55%,var(--r));-webkit-background-clip:text;background-clip:text;color:transparent}
+h2{margin:0 0 6px;font-size:26px}
+.mu{color:var(--mu);margin:0}
+.btn{width:100%;padding:15px;border-radius:14px;background:var(--card);color:var(--tx);font:600 17px inherit;border:1px solid var(--line);cursor:pointer}
+.btn:active{transform:scale(.97)}
+.btn.p{background:linear-gradient(135deg,var(--v),#6a3ff0);border-color:transparent}
+.btn.g{background:none;color:var(--mu)}
+.btn:disabled{opacity:.4}
+.orbs{display:flex;gap:16px;margin:8px 0 14px}
+.orb{width:34px;height:34px;border-radius:50%}
+.orb.c{background:var(--c);box-shadow:0 0 22px var(--c)}
+.orb.r{background:var(--r);box-shadow:0 0 22px var(--r)}
+.orb.v{background:var(--v);box-shadow:0 0 22px var(--v)}
+.code{font-size:84px;font-weight:800;letter-spacing:10px;color:var(--v);text-shadow:0 0 30px #8b5cf688;padding-left:10px}
+.pulse{animation:pu 1.6s infinite}
+@keyframes pu{50%{opacity:.35}}
+input{width:100%;text-align:center;font:800 54px inherit;letter-spacing:12px;padding:10px 10px 10px 22px;background:var(--card);color:var(--tx);border:1px solid var(--line);border-radius:14px;outline:none;user-select:text}
+input:focus{border-color:var(--v)}
+.rules{text-align:left;color:var(--mu);font-size:15px;padding-left:18px;margin:0}
+.rules li{margin-bottom:6px}
+.rules b{color:var(--tx)}
+#game{justify-content:flex-start;gap:10px;padding-top:12px}
+.hud{width:100%;display:flex;justify-content:space-between;color:var(--mu);font-size:14px}
+.chip{width:100%;padding:9px 12px;border-radius:12px;border:1px solid;font-size:15px}
+.chip.r{border-color:var(--c);color:var(--c);background:#22d3ee14}
+.chip.h{border-color:var(--r);color:var(--r);background:#fb718514}
+#bd{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;width:min(100%,380px);aspect-ratio:1}
+.cl{position:relative;background:var(--card);border:1px solid var(--line);border-radius:10px;color:#8b5cf666;font-size:22px;display:flex;align-items:center;justify-content:center}
+.cl.mid{border-color:var(--v);box-shadow:inset 0 0 16px #8b5cf655}
+.cl.pv{background:#8b5cf624;border-color:#8b5cf688}
+.cl i{position:absolute;top:2px;right:6px;font:700 12px system-ui;color:var(--v)}
+.tk{position:absolute;inset:14%;border-radius:50%;display:flex;align-items:center;justify-content:center;font:800 18px system-ui;color:#090b15;transition:all .3s}
+.tk.r{background:var(--c);box-shadow:0 0 16px var(--c)}
+.tk.h{background:var(--r);box-shadow:0 0 16px var(--r)}
+#pn{width:100%;display:flex;flex-direction:column;gap:10px}
+#pn.lock .ctl{opacity:.35;pointer-events:none}
+.sl{display:flex;gap:8px;justify-content:center}
+.sl span{width:56px;height:46px;border-radius:12px;border:1px dashed var(--line);display:flex;align-items:center;justify-content:center;font-size:24px}
+.sl span.f{border:1px solid var(--v);background:#8b5cf61c}
+.pad{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.pad .btn{padding:12px 0;font-size:22px}
+.row{display:flex;gap:8px}
+#st{min-height:22px;color:var(--mu);font-size:14px}
+#ov{position:fixed;inset:0;background:#05060cd9;display:none;align-items:center;justify-content:center;padding:24px;z-index:5}
+#ov.on{display:flex}
+#ov>div{width:100%;max-width:380px;background:var(--card);border:1px solid var(--v);border-radius:20px;padding:24px;text-align:center;display:flex;flex-direction:column;gap:12px;box-shadow:0 0 40px #8b5cf644}
+#ov h2{margin:0}
+#tt{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--card);border:1px solid var(--r);color:var(--tx);padding:10px 16px;border-radius:12px;display:none;z-index:9;max-width:90%;text-align:center;font-size:14px}
+@media(prefers-reduced-motion:reduce){.pulse{animation:none}.tk{transition:none}}
+</style>
+</head>
+<body>
+
+<section class="scr on" id="start">
+  <div class="orbs"><div class="orb c"></div><div class="orb v"></div><div class="orb r"></div></div>
+  <h1>Zeit&shy;schleife</h1>
+  <p class="mu">Plane drei Züge. Errate deinen Gegner.</p>
+  <button class="btn p" data-a="menu" style="margin-top:18px">Starten</button>
+</section>
+
+<section class="scr" id="menu">
+  <h2>Menü</h2>
+  <button class="btn p" data-a="online">Online spielen</button>
+  <button class="btn" data-a="local">Lokal, ein Gerät</button>
+  <button class="btn" data-a="rules">Regeln</button>
+  <button class="btn g" data-a="start">Zurück</button>
+</section>
+
+<section class="scr" id="onl">
+  <h2>Online</h2>
+  <button class="btn p" data-a="create">Raum erstellen</button>
+  <button class="btn" data-a="joinscr">Raum beitreten</button>
+  <button class="btn g" data-a="menu">Zurück</button>
+</section>
+
+<section class="scr" id="join">
+  <h2>Code eingeben</h2>
+  <input id="ji" type="tel" inputmode="numeric" maxlength="2" placeholder="00" autocomplete="off">
+  <button class="btn p" data-a="join">Beitreten</button>
+  <button class="btn g" data-a="onl">Zurück</button>
+</section>
+
+<section class="scr" id="lobby">
+  <p class="mu">Dein Raumcode</p>
+  <div class="code" id="code">--</div>
+  <p class="mu pulse">Warte auf Gegner …</p>
+  <button class="btn g" data-a="leave" style="margin-top:20px">Raum schließen</button>
+</section>
+
+<section class="scr" id="rules">
+  <h2>Regeln</h2>
+  <ol class="rules">
+    <li>Feld 5×5. Der <b style="color:var(--c)">Läufer</b> startet links oben, der <b style="color:var(--r)">Jäger</b> rechts unten.</li>
+    <li>Jede Runde planen beide <b>3 Züge</b> verdeckt: hoch, runter, links, rechts oder warten.</li>
+    <li>Dann laufen beide Spieler Zug für Zug gleichzeitig.</li>
+    <li><b>Jäger gewinnt</b>, wenn er auf dem Feld des Läufers landet oder beide die Plätze tauschen.</li>
+    <li><b>Läufer gewinnt</b>, wenn er die Mitte ★ erreicht oder 5 Runden überlebt.</li>
+    <li>Nach Partie 1 tauscht ihr die Rollen. Wer mehr Partien gewinnt, siegt. Bei 1:1 zählt die schnellere Partie.</li>
+  </ol>
+  <button class="btn g" data-a="menu">Zurück</button>
+</section>
+
+<section class="scr" id="game">
+  <div class="hud"><span id="h1"></span><span id="h2"></span></div>
+  <div class="chip" id="chip"></div>
+  <div id="bd"></div>
+  <div id="pn">
+    <div class="sl" id="sl"></div>
+    <div class="ctl" style="display:flex;flex-direction:column;gap:10px">
+      <div class="pad">
+        <button class="btn" data-a="mv" data-k="u">↑</button>
+        <button class="btn" data-a="mv" data-k="d">↓</button>
+        <button class="btn" data-a="mv" data-k="l">←</button>
+        <button class="btn" data-a="mv" data-k="r">→</button>
+        <button class="btn" data-a="mv" data-k="w">•</button>
+      </div>
+      <div class="row">
+        <button class="btn g" data-a="undo" style="width:35%">Zurück</button>
+        <button class="btn p" data-a="ok" id="okb">Züge bestätigen</button>
+      </div>
+    </div>
+    <div id="st"></div>
+  </div>
+</section>
+
+<div id="ov"><div><h2 id="ot"></h2><p class="mu" id="om"></p><button class="btn p" id="ob"></button></div></div>
+<div id="tt"></div>
+
+<script>
+/* ============ FIREBASE (getrennt von SnapHunt) ============
+   1. Trage hier deine Firebase-Config ein (kann dieselbe wie bei SnapHunt sein).
+   2. Es wird eine eigene, benannte App "zeitschleife" erzeugt und nur der
+      Pfad zeitschleife/rooms/ genutzt. SnapHunt-Daten bleiben unberührt.
+   3. Benötigt die Realtime Database. Regeln: Lesen/Schreiben auf
+      zeitschleife/rooms erlauben.
+   Beispiel: const FB_CONFIG = { apiKey:"...", databaseURL:"https://DEIN-PROJEKT-default-rtdb.firebaseio.com", projectId:"..." };
+*/
+const FB_CONFIG = null;
+const FB_ROOT = 'zeitschleife/rooms';
+let FB = null;
+async function initFB() {
+  if (FB) return;
+  for (const f of ['app', 'database'])
+    await new Promise((ok, no) => {
+      const s = document.createElement('script');
+      s.src = `https://www.gstatic.com/firebasejs/10.12.2/firebase-${f}-compat.js`;
+      s.onload = ok; s.onerror = no; document.head.appendChild(s);
+    });
+  const app = firebase.apps.find(a => a.name === 'zeitschleife') || firebase.initializeApp(FB_CONFIG, 'zeitschleife');
+  FB = app.database();
+}
+/* ============ ENDE FIREBASE ============ */
+
+const $ = s => document.querySelector(s), sleep = ms => new Promise(r => setTimeout(r, ms));
+const N = 5, MAXR = 5, MID = [2, 2];
+const ARR = { u: '↑', d: '↓', l: '←', r: '→', w: '•' };
+const DIR = { u: [0, -1], d: [0, 1], l: [-1, 0], r: [1, 0], w: [0, 0] };
+let S = null, DATA = {}, OVFN = null;
+
+const show = id => document.querySelectorAll('.scr').forEach(e => e.classList.toggle('on', e.id === id));
+const eq = (a, b) => a[0] === b[0] && a[1] === b[1];
+const step = (p, k) => { const d = DIR[k], x = p[0] + d[0], y = p[1] + d[1]; return x < 0 || y < 0 || x >= N || y >= N ? p : [x, y]; };
+const role = (p, m) => (p + m) % 2 === 0 ? 'r' : 'h';
+const rname = r => r === 'r' ? 'Läufer' : 'Jäger';
+const pid = () => S.mode === 'local' ? S.lp : S.me;
+const who = p => S.mode === 'local' ? `Spieler ${p + 1}` : (p === S.me ? 'Du' : 'Gegner');
+
+function toast(t) { const e = $('#tt'); e.textContent = t; e.style.display = 'block'; clearTimeout(toast.t); toast.t = setTimeout(() => e.style.display = 'none', 3200); }
+function ov(t, m, b, fn) { $('#ot').textContent = t; $('#om').textContent = m; $('#ob').textContent = b; OVFN = fn; $('#ov').classList.add('on'); }
+$('#ob').onclick = () => { $('#ov').classList.remove('on'); if (OVFN) OVFN(); };
+
+const newS = (mode, me, code) => ({ mode, me, code, m: 0, r: 0, rp: [0, 0], hp: [4, 4], cur: [null, null], plan: [], wins: [0, 0], used: [0, 0], busy: false, lp: 0, cap: false, ref: null });
+
+/* ---------- Online ---------- */
+async function goOnline() {
+  if (!FB_CONFIG) return toast('Firebase ist nicht eingerichtet. Trage die Config im Abschnitt FIREBASE ein. Lokal spielen geht schon.');
+  try { await initFB(); show('onl'); } catch (e) { toast('Verbindung zu Firebase fehlgeschlagen.'); }
+}
+const fresh = v => v && Date.now() - v.t < 72e5;
+function listen(c) {
+  S.ref = FB.ref(`${FB_ROOT}/${c}`);
+  S.ref.on('value', sn => {
+    DATA = sn.val() || {};
+    if (!S) return;
+    if (DATA.guest && $('#lobby').classList.contains('on')) startGame();
+    pull();
+  });
+}
+async function create() {
+  try {
+    for (let i = 0; i < 40; i++) {
+      const c = String(Math.floor(Math.random() * 100)).padStart(2, '0');
+      const v = (await FB.ref(`${FB_ROOT}/${c}`).once('value')).val();
+      if (!v || !fresh(v)) {
+        await FB.ref(`${FB_ROOT}/${c}`).set({ t: Date.now(), host: true });
+        S = newS('online', 0, c); listen(c);
+        $('#code').textContent = c; show('lobby'); return;
+      }
+    }
+    toast('Alle Codes sind gerade belegt. Versuche es gleich noch einmal.');
+  } catch (e) { toast('Raum konnte nicht erstellt werden. Prüfe die Datenbank-Regeln.'); }
+}
+async function join() {
+  const c = $('#ji').value.padStart(2, '0');
+  if ($('#ji').value.length < 1) return toast('Gib den 2-stelligen Code ein.');
+  try {
+    const v = (await FB.ref(`${FB_ROOT}/${c}`).once('value')).val();
+    if (!v || !v.host || !fresh(v)) return toast('Kein offener Raum mit diesem Code.');
+    if (v.guest) return toast('Der Raum ist schon voll.');
+    await FB.ref(`${FB_ROOT}/${c}`).update({ guest: true });
+    S = newS('online', 1, c); listen(c); startGame();
+  } catch (e) { toast('Beitritt fehlgeschlagen. Prüfe die Verbindung.'); }
+}
+function pull() {
+  if (!S || S.mode !== 'online' || S.busy || !$('#game').classList.contains('on')) return;
+  const e = DATA[`m${S.m}r${S.r}`] || {}, o = 1 - S.me;
+  if (e['p' + o] && !S.cur[o]) S.cur[o] = e['p' + o];
+  if (S.cur[S.me] && S.cur[o]) resolve(); else ui();
+}
+
+/* ---------- Spiel ---------- */
+function startGame() { S.m = 0; show('game'); startMatch(); }
+function startMatch() {
+  Object.assign(S, { r: 0, rp: [0, 0], hp: [4, 4], busy: false, cap: false });
+  roundStart();
+}
+function roundStart() {
+  S.cur = [null, null]; S.plan = []; S.lp = 0; ui();
+  if (S.mode === 'local') handover(0); else pull();
+}
+function handover(p) {
+  ui();
+  ov(`Gerät an ${who(p)}`, `Du bist ${rname(role(p, S.m))}. Der Gegner schaut weg.`, 'Bereit', () => { S.lp = p; ui(); });
+  S.lp = p;
+}
+
+function ui() {
+  if (!S) return;
+  const p = pid(), ro = role(p, S.m);
+  $('#h1').textContent = `Partie ${S.m + 1} von 2 · Runde ${Math.min(S.r + 1, MAXR)} von ${MAXR}`;
+  $('#h2').textContent = S.mode === 'local' ? `${S.wins[0]} : ${S.wins[1]}` : `Du ${S.wins[S.me]} : ${S.wins[1 - S.me]}`;
+  const ch = $('#chip');
+  ch.className = 'chip ' + ro;
+  ch.textContent = ro === 'r' ? `${S.mode === 'local' ? who(p) + ' ist' : 'Du bist'} Läufer: erreiche ★ oder überlebe` : `${S.mode === 'local' ? who(p) + ' ist' : 'Du bist'} Jäger: fange den Läufer`;
+  $('#sl').innerHTML = [0, 1, 2].map(i => S.plan[i] ? `<span class="f">${ARR[S.plan[i]]}</span>` : '<span></span>').join('');
+  $('#okb').disabled = S.plan.length < 3;
+  const waiting = S.mode === 'online' && S.cur[S.me] && !S.busy;
+  $('#pn').classList.toggle('lock', S.busy || waiting);
+  $('#st').textContent = waiting ? 'Warte auf den Gegner …' : (S.busy ? '' : 'Wähle 3 Züge.');
+  draw();
+}
+function draw() {
+  const p = pid(), mine = role(p, S.m);
+  let pv = {};
+  if (!S.busy && S.plan.length) {
+    let q = (mine === 'r' ? S.rp : S.hp);
+    S.plan.forEach((k, i) => { q = step(q, k); pv[q[0] + ',' + q[1]] = (pv[q[0] + ',' + q[1]] || '') + (i + 1); });
+  }
+  let h = '';
+  for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+    const key = x + ',' + y, mid = x === 2 && y === 2;
+    h += `<div class="cl${mid ? ' mid' : ''}${pv[key] ? ' pv' : ''}">${mid ? '★' : ''}${pv[key] ? `<i>${pv[key]}</i>` : ''}`
+      + (eq(S.rp, [x, y]) ? '<div class="tk r">L</div>' : '')
+      + (eq(S.hp, [x, y]) ? `<div class="tk h">${S.cap ? '✕' : 'J'}</div>` : '') + '</div>';
+  }
+  $('#bd').innerHTML = h;
+}
+
+function addMove(k) { if (S.plan.length < 3) { S.plan.push(k); ui(); } }
+function submit() {
+  const p = pid();
+  if (S.plan.length < 3) return;
+  S.cur[p] = [...S.plan];
+  if (S.mode === 'online') S.ref.child(`m${S.m}r${S.r}/p${p}`).set(S.plan);
+  S.plan = [];
+  if (S.mode === 'local' && !S.cur[1 - p]) return handover(1 - p);
+  if (S.cur[0] && S.cur[1]) resolve(); else ui();
+}
+
+async function resolve() {
+  if (S.busy) return;
+  S.busy = true; ui();
+  const R = role(0, S.m) === 'r' ? 0 : 1, H = 1 - R;
+  for (let i = 0; i < 3; i++) {
+    const orp = S.rp, ohp = S.hp;
+    S.rp = step(S.rp, S.cur[R][i]); S.hp = step(S.hp, S.cur[H][i]);
+    draw(); await sleep(650);
+    if (eq(S.rp, S.hp) || (eq(S.rp, ohp) && eq(S.hp, orp))) return end('h');
+    if (eq(S.rp, MID)) return end('r');
+  }
+  S.r++;
+  if (S.r >= MAXR) return end('r');
+  S.busy = false; roundStart();
+}
+
+function end(w) {
+  const win = [0, 1].find(p => role(p, S.m) === w);
+  S.wins[win]++; S.used[win] += Math.min(S.r + 1, MAXR);
+  S.cap = w === 'h'; draw();
+  const why = w === 'h' ? 'Der Jäger hat den Läufer gefangen.' : (eq(S.rp, MID) ? 'Der Läufer hat die Mitte erreicht.' : 'Der Läufer hat 5 Runden überlebt.');
+  const won = p => S.mode === 'local' ? `Spieler ${p + 1} gewinnt` : (p === S.me ? 'Du gewinnst' : 'Gegner gewinnt');
+  if (S.m === 0) {
+    ov(`${won(win)} Partie 1`, why + ' Jetzt tauscht ihr die Rollen.', 'Partie 2 starten', () => { S.m = 1; startMatch(); });
+  } else {
+    const [a, b] = S.wins;
+    let f = a !== b ? (a > b ? 0 : 1) : (S.used[0] !== S.used[1] ? (S.used[0] < S.used[1] ? 0 : 1) : -1);
+    ov(f < 0 ? 'Unentschieden' : `${won(f)} das Duell`, `${why} Stand ${a} : ${b}${a === b && f >= 0 ? ', die schnellere Partie entscheidet' : ''}.`, 'Zum Menü', leave);
+  }
+}
+
+function leave() {
+  if (S && S.ref) { S.ref.off(); if (S.me === 0) S.ref.remove(); }
+  S = null; DATA = {}; $('#ov').classList.remove('on'); show('menu');
+}
+
+const act = {
+  start: () => show('start'), menu: () => show('menu'), rules: () => show('rules'),
+  online: goOnline, onl: () => show('onl'), create, joinscr: () => { $('#ji').value = ''; show('join'); }, join,
+  local: () => { S = newS('local', 0, null); startGame(); },
+  leave, mv: b => addMove(b.dataset.k), undo: () => { S.plan.pop(); ui(); }, ok: submit
+};
+document.addEventListener('click', e => { const b = e.target.closest('[data-a]'); if (b && act[b.dataset.a]) act[b.dataset.a](b); });
+$('#ji').addEventListener('input', e => e.target.value = e.target.value.replace(/\D/g, '').slice(0, 2));
+</script>
+</body>
+</html>
