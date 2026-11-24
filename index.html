@@ -2,338 +2,352 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Zeitschleife</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lyric Speaker</title>
 <style>
-:root{--bg:#090b15;--card:#131728;--line:#262c4a;--tx:#e9ebf8;--mu:#8b91b6;--v:#8b5cf6;--c:#22d3ee;--r:#fb7185}
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none}
-html,body{height:100%;margin:0}
-body{background:radial-gradient(800px 460px at 50% -8%,#231552,var(--bg));color:var(--tx);font:16px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
-.scr{display:none;min-height:100%;padding:20px;flex-direction:column;align-items:center;justify-content:center;gap:12px;max-width:460px;margin:0 auto;text-align:center}
-.scr.on{display:flex}
-h1{font-size:46px;line-height:1;letter-spacing:1px;margin:0 0 4px;background:linear-gradient(90deg,var(--c),var(--v) 55%,var(--r));-webkit-background-clip:text;background-clip:text;color:transparent}
-h2{margin:0 0 6px;font-size:26px}
-.mu{color:var(--mu);margin:0}
-.btn{width:100%;padding:15px;border-radius:14px;background:var(--card);color:var(--tx);font:600 17px inherit;border:1px solid var(--line);cursor:pointer}
-.btn:active{transform:scale(.97)}
-.btn.p{background:linear-gradient(135deg,var(--v),#6a3ff0);border-color:transparent}
-.btn.g{background:none;color:var(--mu)}
-.btn:disabled{opacity:.4}
-.orbs{display:flex;gap:16px;margin:8px 0 14px}
-.orb{width:34px;height:34px;border-radius:50%}
-.orb.c{background:var(--c);box-shadow:0 0 22px var(--c)}
-.orb.r{background:var(--r);box-shadow:0 0 22px var(--r)}
-.orb.v{background:var(--v);box-shadow:0 0 22px var(--v)}
-.code{font-size:84px;font-weight:800;letter-spacing:10px;color:var(--v);text-shadow:0 0 30px #8b5cf688;padding-left:10px}
-.pulse{animation:pu 1.6s infinite}
-@keyframes pu{50%{opacity:.35}}
-input{width:100%;text-align:center;font:800 54px inherit;letter-spacing:12px;padding:10px 10px 10px 22px;background:var(--card);color:var(--tx);border:1px solid var(--line);border-radius:14px;outline:none;user-select:text}
-input:focus{border-color:var(--v)}
-.rules{text-align:left;color:var(--mu);font-size:15px;padding-left:18px;margin:0}
-.rules li{margin-bottom:6px}
-.rules b{color:var(--tx)}
-#game{justify-content:flex-start;gap:10px;padding-top:12px}
-.hud{width:100%;display:flex;justify-content:space-between;color:var(--mu);font-size:14px}
-.chip{width:100%;padding:9px 12px;border-radius:12px;border:1px solid;font-size:15px}
-.chip.r{border-color:var(--c);color:var(--c);background:#22d3ee14}
-.chip.h{border-color:var(--r);color:var(--r);background:#fb718514}
-#bd{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;width:min(100%,380px);aspect-ratio:1}
-.cl{position:relative;background:var(--card);border:1px solid var(--line);border-radius:10px;color:#8b5cf666;font-size:22px;display:flex;align-items:center;justify-content:center}
-.cl.mid{border-color:var(--v);box-shadow:inset 0 0 16px #8b5cf655}
-.cl.pv{background:#8b5cf624;border-color:#8b5cf688}
-.cl i{position:absolute;top:2px;right:6px;font:700 12px system-ui;color:var(--v)}
-.tk{position:absolute;inset:14%;border-radius:50%;display:flex;align-items:center;justify-content:center;font:800 18px system-ui;color:#090b15;transition:all .3s}
-.tk.r{background:var(--c);box-shadow:0 0 16px var(--c)}
-.tk.h{background:var(--r);box-shadow:0 0 16px var(--r)}
-#pn{width:100%;display:flex;flex-direction:column;gap:10px}
-#pn.lock .ctl{opacity:.35;pointer-events:none}
-.sl{display:flex;gap:8px;justify-content:center}
-.sl span{width:56px;height:46px;border-radius:12px;border:1px dashed var(--line);display:flex;align-items:center;justify-content:center;font-size:24px}
-.sl span.f{border:1px solid var(--v);background:#8b5cf61c}
-.pad{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
-.pad .btn{padding:12px 0;font-size:22px}
-.row{display:flex;gap:8px}
-#st{min-height:22px;color:var(--mu);font-size:14px}
-#ov{position:fixed;inset:0;background:#05060cd9;display:none;align-items:center;justify-content:center;padding:24px;z-index:5}
-#ov.on{display:flex}
-#ov>div{width:100%;max-width:380px;background:var(--card);border:1px solid var(--v);border-radius:20px;padding:24px;text-align:center;display:flex;flex-direction:column;gap:12px;box-shadow:0 0 40px #8b5cf644}
-#ov h2{margin:0}
-#tt{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--card);border:1px solid var(--r);color:var(--tx);padding:10px 16px;border-radius:12px;display:none;z-index:9;max-width:90%;text-align:center;font-size:14px}
-@media(prefers-reduced-motion:reduce){.pulse{animation:none}.tk{transition:none}}
+  :root { --fg:#fff; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html,body { width:100%; height:100%; background:#000; color:var(--fg); overflow:hidden;
+    font-family:"Helvetica Neue", Inter, "Segoe UI", Arial, sans-serif; }
+  body.idle { cursor:none; }
+
+  /* ---------- Bühne ---------- */
+  #stage { position:fixed; inset:0; overflow:hidden; }
+  #lines { position:absolute; left:50%; top:50%; width:84vw; transform:translate(-50%,0);
+    transition:transform 1.1s cubic-bezier(.22,.8,.22,1); display:flex; flex-direction:column; align-items:center; }
+  .l { width:100%; text-align:center; margin:2.2vh 0; font-weight:300; letter-spacing:.01em;
+    font-size:clamp(28px,5.6vw,84px); line-height:1.22; opacity:0; transform:scale(.8);
+    transition:opacity 1s ease, transform 1.1s cubic-bezier(.22,.8,.22,1); will-change:transform,opacity; }
+  .l.cur { transform:scale(1); }
+  .w { display:inline-block; margin:0 .14em; opacity:0; transform:translateY(.45em) scale(.94);
+    filter:blur(14px); transition:opacity 1s ease, transform 1.4s cubic-bezier(.2,.8,.2,1), filter 1s ease; }
+  .w i { display:inline-block; font-style:normal; animation:drift var(--dur,7s) ease-in-out var(--del,0s) infinite alternate; }
+  .l.past .w, .l.cur .w.on { opacity:1; transform:none; filter:blur(0); }
+  .l.past .w { filter:blur(.6px); }
+  @keyframes drift {
+    from { transform:translate(0,0) rotate(0deg); }
+    to   { transform:translate(var(--dx,2px),var(--dy,-4px)) rotate(var(--dr,0deg)); }
+  }
+
+  /* ---------- Info / Status ---------- */
+  #status { position:fixed; left:0; right:0; top:50%; transform:translateY(-50%); text-align:center;
+    font-weight:200; font-size:clamp(18px,2.4vw,32px); letter-spacing:.08em; opacity:.45;
+    transition:opacity .8s; padding:0 8vw; }
+  #status.hide { opacity:0; pointer-events:none; }
+  #meta { position:fixed; left:0; right:0; bottom:3.2vh; text-align:center; font-size:clamp(11px,1.1vw,15px);
+    letter-spacing:.18em; text-transform:uppercase; opacity:.28; transition:opacity .6s; padding:0 6vw; }
+  #meta.off { opacity:0; }
+  #hint { position:fixed; right:18px; top:14px; font-size:12px; opacity:0; transition:opacity .4s; letter-spacing:.05em; text-align:right; line-height:1.6; }
+  body:not(.idle) #hint { opacity:.35; }
+
+  /* ---------- Setup ---------- */
+  #setup { position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:#000; z-index:10; }
+  #setup.show { display:flex; }
+  .card { width:min(560px,90vw); font-size:15px; line-height:1.55; }
+  .card h1 { font-weight:200; font-size:34px; letter-spacing:.1em; margin-bottom:18px; }
+  .card p { opacity:.7; margin-bottom:14px; }
+  .card ol { margin:0 0 18px 20px; opacity:.7; }
+  .card li { margin-bottom:6px; }
+  code { background:#1a1a1a; padding:2px 7px; border-radius:5px; font-size:13px; user-select:all; }
+  input { width:100%; padding:13px 14px; background:#0d0d0d; border:1px solid #333; border-radius:8px;
+    color:#fff; font-size:15px; margin-bottom:14px; outline:none; }
+  input:focus { border-color:#777; }
+  button { padding:13px 24px; background:#fff; color:#000; border:0; border-radius:999px; font-size:15px;
+    font-weight:600; cursor:pointer; }
+  button:hover { opacity:.85; }
+  #err { color:#ff7a7a; margin-top:12px; font-size:13px; }
 </style>
 </head>
 <body>
 
-<section class="scr on" id="start">
-  <div class="orbs"><div class="orb c"></div><div class="orb v"></div><div class="orb r"></div></div>
-  <h1>Zeit&shy;schleife</h1>
-  <p class="mu">Plane drei Züge. Errate deinen Gegner.</p>
-  <button class="btn p" data-a="menu" style="margin-top:18px">Starten</button>
-</section>
+<div id="stage"><div id="lines"></div></div>
+<div id="status">Verbinde …</div>
+<div id="meta" class="off"></div>
+<div id="hint">F Vollbild · I Info · ← → Timing · L Abmelden<br><span id="off"></span></div>
 
-<section class="scr" id="menu">
-  <h2>Menü</h2>
-  <button class="btn p" data-a="online">Online spielen</button>
-  <button class="btn" data-a="local">Lokal, ein Gerät</button>
-  <button class="btn" data-a="rules">Regeln</button>
-  <button class="btn g" data-a="start">Zurück</button>
-</section>
-
-<section class="scr" id="onl">
-  <h2>Online</h2>
-  <button class="btn p" data-a="create">Raum erstellen</button>
-  <button class="btn" data-a="joinscr">Raum beitreten</button>
-  <button class="btn g" data-a="menu">Zurück</button>
-</section>
-
-<section class="scr" id="join">
-  <h2>Code eingeben</h2>
-  <input id="ji" type="tel" inputmode="numeric" maxlength="2" placeholder="00" autocomplete="off">
-  <button class="btn p" data-a="join">Beitreten</button>
-  <button class="btn g" data-a="onl">Zurück</button>
-</section>
-
-<section class="scr" id="lobby">
-  <p class="mu">Dein Raumcode</p>
-  <div class="code" id="code">--</div>
-  <p class="mu pulse">Warte auf Gegner …</p>
-  <button class="btn g" data-a="leave" style="margin-top:20px">Raum schließen</button>
-</section>
-
-<section class="scr" id="rules">
-  <h2>Regeln</h2>
-  <ol class="rules">
-    <li>Feld 5×5. Der <b style="color:var(--c)">Läufer</b> startet links oben, der <b style="color:var(--r)">Jäger</b> rechts unten.</li>
-    <li>Jede Runde planen beide <b>3 Züge</b> verdeckt: hoch, runter, links, rechts oder warten.</li>
-    <li>Dann laufen beide Spieler Zug für Zug gleichzeitig.</li>
-    <li><b>Jäger gewinnt</b>, wenn er auf dem Feld des Läufers landet oder beide die Plätze tauschen.</li>
-    <li><b>Läufer gewinnt</b>, wenn er die Mitte ★ erreicht oder 5 Runden überlebt.</li>
-    <li>Nach Partie 1 tauscht ihr die Rollen. Wer mehr Partien gewinnt, siegt. Bei 1:1 zählt die schnellere Partie.</li>
-  </ol>
-  <button class="btn g" data-a="menu">Zurück</button>
-</section>
-
-<section class="scr" id="game">
-  <div class="hud"><span id="h1"></span><span id="h2"></span></div>
-  <div class="chip" id="chip"></div>
-  <div id="bd"></div>
-  <div id="pn">
-    <div class="sl" id="sl"></div>
-    <div class="ctl" style="display:flex;flex-direction:column;gap:10px">
-      <div class="pad">
-        <button class="btn" data-a="mv" data-k="u">↑</button>
-        <button class="btn" data-a="mv" data-k="d">↓</button>
-        <button class="btn" data-a="mv" data-k="l">←</button>
-        <button class="btn" data-a="mv" data-k="r">→</button>
-        <button class="btn" data-a="mv" data-k="w">•</button>
-      </div>
-      <div class="row">
-        <button class="btn g" data-a="undo" style="width:35%">Zurück</button>
-        <button class="btn p" data-a="ok" id="okb">Züge bestätigen</button>
-      </div>
-    </div>
-    <div id="st"></div>
+<div id="setup">
+  <div class="card">
+    <h1>LYRIC SPEAKER</h1>
+    <p>Einmalige Einrichtung (kostenlos, dauert 2 Minuten):</p>
+    <ol>
+      <li>Auf <code>developer.spotify.com/dashboard</code> eine App erstellen und „Web API" ankreuzen.</li>
+      <li>Als <b>Redirect URI</b> exakt diese Adresse eintragen:<br><code id="ruri"></code></li>
+      <li>Die <b>Client ID</b> der App hier einfügen:</li>
+    </ol>
+    <input id="cid" placeholder="Client ID" autocomplete="off" spellcheck="false">
+    <button id="go">Mit Spotify verbinden</button>
+    <div id="err"></div>
   </div>
-</section>
-
-<div id="ov"><div><h2 id="ot"></h2><p class="mu" id="om"></p><button class="btn p" id="ob"></button></div></div>
-<div id="tt"></div>
+</div>
 
 <script>
-/* ============ FIREBASE (getrennt von SnapHunt) ============
-   1. Trage hier deine Firebase-Config ein (kann dieselbe wie bei SnapHunt sein).
-   2. Es wird eine eigene, benannte App "zeitschleife" erzeugt und nur der
-      Pfad zeitschleife/rooms/ genutzt. SnapHunt-Daten bleiben unberührt.
-   3. Benötigt die Realtime Database. Regeln: Lesen/Schreiben auf
-      zeitschleife/rooms erlauben.
-   Beispiel: const FB_CONFIG = { apiKey:"...", databaseURL:"https://DEIN-PROJEKT-default-rtdb.firebaseio.com", projectId:"..." };
-*/
-const FB_CONFIG = null;
-const FB_ROOT = 'zeitschleife/rooms';
-let FB = null;
-async function initFB() {
-  if (FB) return;
-  for (const f of ['app', 'database'])
-    await new Promise((ok, no) => {
-      const s = document.createElement('script');
-      s.src = `https://www.gstatic.com/firebasejs/10.12.2/firebase-${f}-compat.js`;
-      s.onload = ok; s.onerror = no; document.head.appendChild(s);
-    });
-  const app = firebase.apps.find(a => a.name === 'zeitschleife') || firebase.initializeApp(FB_CONFIG, 'zeitschleife');
-  FB = app.database();
-}
-/* ============ ENDE FIREBASE ============ */
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const LS = {
+    get:(k,d=null)=>{ try{ const v=localStorage.getItem(k); return v===null?d:v; }catch(e){ return d; } },
+    set:(k,v)=>{ try{ localStorage.setItem(k,v); }catch(e){} },
+    del:k=>{ try{ localStorage.removeItem(k); }catch(e){} }
+  };
+  const REDIRECT = location.origin + location.pathname;
+  const SCOPE = 'user-read-currently-playing user-read-playback-state';
+  const $lines=$('lines'), $status=$('status'), $meta=$('meta');
 
-const $ = s => document.querySelector(s), sleep = ms => new Promise(r => setTimeout(r, ms));
-const N = 5, MAXR = 5, MID = [2, 2];
-const ARR = { u: '↑', d: '↓', l: '←', r: '→', w: '•' };
-const DIR = { u: [0, -1], d: [0, 1], l: [-1, 0], r: [1, 0], w: [0, 0] };
-let S = null, DATA = {}, OVFN = null;
+  /* ===================== Spotify Auth (PKCE) ===================== */
+  const b64url = buf => btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+  const rand = n => b64url(crypto.getRandomValues(new Uint8Array(n)));
 
-const show = id => document.querySelectorAll('.scr').forEach(e => e.classList.toggle('on', e.id === id));
-const eq = (a, b) => a[0] === b[0] && a[1] === b[1];
-const step = (p, k) => { const d = DIR[k], x = p[0] + d[0], y = p[1] + d[1]; return x < 0 || y < 0 || x >= N || y >= N ? p : [x, y]; };
-const role = (p, m) => (p + m) % 2 === 0 ? 'r' : 'h';
-const rname = r => r === 'r' ? 'Läufer' : 'Jäger';
-const pid = () => S.mode === 'local' ? S.lp : S.me;
-const who = p => S.mode === 'local' ? `Spieler ${p + 1}` : (p === S.me ? 'Du' : 'Gegner');
+  async function login(){
+    const cid = $('cid').value.trim();
+    if(!/^[a-f0-9]{32}$/i.test(cid)){ $('err').textContent='Die Client ID sollte 32 Zeichen lang sein (nur 0-9 und a-f).'; return; }
+    LS.set('cid', cid);
+    const verifier = rand(64);
+    LS.set('verifier', verifier);
+    const challenge = b64url(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(verifier)));
+    const p = new URLSearchParams({ client_id:cid, response_type:'code', redirect_uri:REDIRECT,
+      code_challenge_method:'S256', code_challenge:challenge, scope:SCOPE });
+    location.href = 'https://accounts.spotify.com/authorize?' + p;
+  }
 
-function toast(t) { const e = $('#tt'); e.textContent = t; e.style.display = 'block'; clearTimeout(toast.t); toast.t = setTimeout(() => e.style.display = 'none', 3200); }
-function ov(t, m, b, fn) { $('#ot').textContent = t; $('#om').textContent = m; $('#ob').textContent = b; OVFN = fn; $('#ov').classList.add('on'); }
-$('#ob').onclick = () => { $('#ov').classList.remove('on'); if (OVFN) OVFN(); };
+  async function tokenRequest(body){
+    const r = await fetch('https://accounts.spotify.com/api/token', {
+      method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body:new URLSearchParams(body) });
+    if(!r.ok) throw new Error('Token-Fehler ' + r.status);
+    const j = await r.json();
+    LS.set('access', j.access_token);
+    if(j.refresh_token) LS.set('refresh', j.refresh_token);
+    LS.set('exp', String(Date.now() + j.expires_in*1000));
+    return j.access_token;
+  }
 
-const newS = (mode, me, code) => ({ mode, me, code, m: 0, r: 0, rp: [0, 0], hp: [4, 4], cur: [null, null], plan: [], wins: [0, 0], used: [0, 0], busy: false, lp: 0, cap: false, ref: null });
+  async function getToken(){
+    if(!LS.get('access')) return null;
+    if(Date.now() < Number(LS.get('exp',0)) - 60000) return LS.get('access');
+    try{
+      return await tokenRequest({ grant_type:'refresh_token', refresh_token:LS.get('refresh'), client_id:LS.get('cid') });
+    }catch(e){ logout(); return null; }
+  }
 
-/* ---------- Online ---------- */
-async function goOnline() {
-  if (!FB_CONFIG) return toast('Firebase ist nicht eingerichtet. Trage die Config im Abschnitt FIREBASE ein. Lokal spielen geht schon.');
-  try { await initFB(); show('onl'); } catch (e) { toast('Verbindung zu Firebase fehlgeschlagen.'); }
-}
-const fresh = v => v && Date.now() - v.t < 72e5;
-function listen(c) {
-  S.ref = FB.ref(`${FB_ROOT}/${c}`);
-  S.ref.on('value', sn => {
-    DATA = sn.val() || {};
-    if (!S) return;
-    if (DATA.guest && $('#lobby').classList.contains('on')) startGame();
-    pull();
-  });
-}
-async function create() {
-  try {
-    for (let i = 0; i < 40; i++) {
-      const c = String(Math.floor(Math.random() * 100)).padStart(2, '0');
-      const v = (await FB.ref(`${FB_ROOT}/${c}`).once('value')).val();
-      if (!v || !fresh(v)) {
-        await FB.ref(`${FB_ROOT}/${c}`).set({ t: Date.now(), host: true });
-        S = newS('online', 0, c); listen(c);
-        $('#code').textContent = c; show('lobby'); return;
-      }
+  function logout(){ ['access','refresh','exp'].forEach(LS.del); location.reload(); }
+
+  async function handleCallback(){
+    const q = new URLSearchParams(location.search);
+    if(q.get('error')){ history.replaceState({},'',REDIRECT); return false; }
+    const code = q.get('code');
+    if(!code) return false;
+    try{
+      await tokenRequest({ grant_type:'authorization_code', code, redirect_uri:REDIRECT,
+        client_id:LS.get('cid'), code_verifier:LS.get('verifier') });
+    }catch(e){ console.error(e); }
+    history.replaceState({},'',REDIRECT);
+    return true;
+  }
+
+  /* ===================== LRC / LRCLIB ===================== */
+  function parseLRC(txt){
+    const out=[];
+    for(const raw of txt.split(/\r?\n/)){
+      const re=/\[(\d+):(\d+(?:[.:]\d+)?)\]/g; let m, times=[], last=0;
+      while((m=re.exec(raw))){ times.push(Number(m[1])*60 + Number(m[2].replace(':','.'))); last=re.lastIndex; }
+      if(!times.length) continue;
+      const text = raw.slice(last).replace(/<\d+:\d+(?:[.:]\d+)?>/g,'').trim();
+      times.forEach(t=>out.push({t, text}));
     }
-    toast('Alle Codes sind gerade belegt. Versuche es gleich noch einmal.');
-  } catch (e) { toast('Raum konnte nicht erstellt werden. Prüfe die Datenbank-Regeln.'); }
-}
-async function join() {
-  const c = $('#ji').value.padStart(2, '0');
-  if ($('#ji').value.length < 1) return toast('Gib den 2-stelligen Code ein.');
-  try {
-    const v = (await FB.ref(`${FB_ROOT}/${c}`).once('value')).val();
-    if (!v || !v.host || !fresh(v)) return toast('Kein offener Raum mit diesem Code.');
-    if (v.guest) return toast('Der Raum ist schon voll.');
-    await FB.ref(`${FB_ROOT}/${c}`).update({ guest: true });
-    S = newS('online', 1, c); listen(c); startGame();
-  } catch (e) { toast('Beitritt fehlgeschlagen. Prüfe die Verbindung.'); }
-}
-function pull() {
-  if (!S || S.mode !== 'online' || S.busy || !$('#game').classList.contains('on')) return;
-  const e = DATA[`m${S.m}r${S.r}`] || {}, o = 1 - S.me;
-  if (e['p' + o] && !S.cur[o]) S.cur[o] = e['p' + o];
-  if (S.cur[S.me] && S.cur[o]) resolve(); else ui();
-}
-
-/* ---------- Spiel ---------- */
-function startGame() { S.m = 0; show('game'); startMatch(); }
-function startMatch() {
-  Object.assign(S, { r: 0, rp: [0, 0], hp: [4, 4], busy: false, cap: false });
-  roundStart();
-}
-function roundStart() {
-  S.cur = [null, null]; S.plan = []; S.lp = 0; ui();
-  if (S.mode === 'local') handover(0); else pull();
-}
-function handover(p) {
-  ui();
-  ov(`Gerät an ${who(p)}`, `Du bist ${rname(role(p, S.m))}. Der Gegner schaut weg.`, 'Bereit', () => { S.lp = p; ui(); });
-  S.lp = p;
-}
-
-function ui() {
-  if (!S) return;
-  const p = pid(), ro = role(p, S.m);
-  $('#h1').textContent = `Partie ${S.m + 1} von 2 · Runde ${Math.min(S.r + 1, MAXR)} von ${MAXR}`;
-  $('#h2').textContent = S.mode === 'local' ? `${S.wins[0]} : ${S.wins[1]}` : `Du ${S.wins[S.me]} : ${S.wins[1 - S.me]}`;
-  const ch = $('#chip');
-  ch.className = 'chip ' + ro;
-  ch.textContent = ro === 'r' ? `${S.mode === 'local' ? who(p) + ' ist' : 'Du bist'} Läufer: erreiche ★ oder überlebe` : `${S.mode === 'local' ? who(p) + ' ist' : 'Du bist'} Jäger: fange den Läufer`;
-  $('#sl').innerHTML = [0, 1, 2].map(i => S.plan[i] ? `<span class="f">${ARR[S.plan[i]]}</span>` : '<span></span>').join('');
-  $('#okb').disabled = S.plan.length < 3;
-  const waiting = S.mode === 'online' && S.cur[S.me] && !S.busy;
-  $('#pn').classList.toggle('lock', S.busy || waiting);
-  $('#st').textContent = waiting ? 'Warte auf den Gegner …' : (S.busy ? '' : 'Wähle 3 Züge.');
-  draw();
-}
-function draw() {
-  const p = pid(), mine = role(p, S.m);
-  let pv = {};
-  if (!S.busy && S.plan.length) {
-    let q = (mine === 'r' ? S.rp : S.hp);
-    S.plan.forEach((k, i) => { q = step(q, k); pv[q[0] + ',' + q[1]] = (pv[q[0] + ',' + q[1]] || '') + (i + 1); });
+    return out.sort((a,b)=>a.t-b.t);
   }
-  let h = '';
-  for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
-    const key = x + ',' + y, mid = x === 2 && y === 2;
-    h += `<div class="cl${mid ? ' mid' : ''}${pv[key] ? ' pv' : ''}">${mid ? '★' : ''}${pv[key] ? `<i>${pv[key]}</i>` : ''}`
-      + (eq(S.rp, [x, y]) ? '<div class="tk r">L</div>' : '')
-      + (eq(S.hp, [x, y]) ? `<div class="tk h">${S.cap ? '✕' : 'J'}</div>` : '') + '</div>';
+  const clean = s => s.replace(/\s*[\(\[].*?[\)\]]/g,'').replace(/\s+-\s+.*$/,'').trim();
+  const cache = new Map();
+
+  async function lrclib(path, params){
+    const r = await fetch('https://lrclib.net/api/' + path + '?' + new URLSearchParams(params));
+    if(!r.ok) return null;
+    return r.json();
   }
-  $('#bd').innerHTML = h;
-}
 
-function addMove(k) { if (S.plan.length < 3) { S.plan.push(k); ui(); } }
-function submit() {
-  const p = pid();
-  if (S.plan.length < 3) return;
-  S.cur[p] = [...S.plan];
-  if (S.mode === 'online') S.ref.child(`m${S.m}r${S.r}/p${p}`).set(S.plan);
-  S.plan = [];
-  if (S.mode === 'local' && !S.cur[1 - p]) return handover(1 - p);
-  if (S.cur[0] && S.cur[1]) resolve(); else ui();
-}
-
-async function resolve() {
-  if (S.busy) return;
-  S.busy = true; ui();
-  const R = role(0, S.m) === 'r' ? 0 : 1, H = 1 - R;
-  for (let i = 0; i < 3; i++) {
-    const orp = S.rp, ohp = S.hp;
-    S.rp = step(S.rp, S.cur[R][i]); S.hp = step(S.hp, S.cur[H][i]);
-    draw(); await sleep(650);
-    if (eq(S.rp, S.hp) || (eq(S.rp, ohp) && eq(S.hp, orp))) return end('h');
-    if (eq(S.rp, MID)) return end('r');
+  async function fetchLyrics(tr){
+    if(cache.has(tr.id)) return cache.get(tr.id);
+    const dur = Math.round(tr.duration/1000);
+    let synced = null;
+    try{
+      let j = await lrclib('get', { track_name:tr.name, artist_name:tr.artist, album_name:tr.album, duration:dur });
+      if(j && j.syncedLyrics) synced = j.syncedLyrics;
+      if(!synced){
+        const tries = [
+          { track_name:tr.name, artist_name:tr.artist },
+          { track_name:clean(tr.name), artist_name:tr.artist },
+          { q: clean(tr.name) + ' ' + tr.artist }
+        ];
+        for(const p of tries){
+          const list = await lrclib('search', p);
+          const c = (list||[]).filter(x=>x.syncedLyrics);
+          if(c.length){
+            c.sort((a,b)=>Math.abs(a.duration-dur)-Math.abs(b.duration-dur));
+            if(Math.abs(c[0].duration-dur) <= 6){ synced = c[0].syncedLyrics; break; }
+          }
+        }
+      }
+    }catch(e){ console.warn('LRCLIB', e); }
+    const res = synced ? parseLRC(synced) : [];
+    cache.set(tr.id, res);
+    return res;
   }
-  S.r++;
-  if (S.r >= MAXR) return end('r');
-  S.busy = false; roundStart();
-}
 
-function end(w) {
-  const win = [0, 1].find(p => role(p, S.m) === w);
-  S.wins[win]++; S.used[win] += Math.min(S.r + 1, MAXR);
-  S.cap = w === 'h'; draw();
-  const why = w === 'h' ? 'Der Jäger hat den Läufer gefangen.' : (eq(S.rp, MID) ? 'Der Läufer hat die Mitte erreicht.' : 'Der Läufer hat 5 Runden überlebt.');
-  const won = p => S.mode === 'local' ? `Spieler ${p + 1} gewinnt` : (p === S.me ? 'Du gewinnst' : 'Gegner gewinnt');
-  if (S.m === 0) {
-    ov(`${won(win)} Partie 1`, why + ' Jetzt tauscht ihr die Rollen.', 'Partie 2 starten', () => { S.m = 1; startMatch(); });
-  } else {
-    const [a, b] = S.wins;
-    let f = a !== b ? (a > b ? 0 : 1) : (S.used[0] !== S.used[1] ? (S.used[0] < S.used[1] ? 0 : 1) : -1);
-    ov(f < 0 ? 'Unentschieden' : `${won(f)} das Duell`, `${why} Stand ${a} : ${b}${a === b && f >= 0 ? ', die schnellere Partie entscheidet' : ''}.`, 'Zum Menü', leave);
+  /* ===================== Rendering ===================== */
+  let lines=[], els=[], cur=-2, onCount=-1, offset=Number(LS.get('offset',0));
+  const rnd=(a,b)=>a+Math.random()*(b-a);
+
+  function build(list){
+    $lines.innerHTML=''; els=[]; cur=-2; onCount=-1;
+    list.forEach(L=>{
+      const d=document.createElement('div'); d.className='l';
+      const words = L.text ? L.text.split(/\s+/) : [];
+      d._w = words.map(wd=>{
+        const s=document.createElement('span'); s.className='w';
+        const i=document.createElement('i'); i.textContent=wd;
+        i.style.setProperty('--dur', rnd(5,10).toFixed(1)+'s');
+        i.style.setProperty('--del', (-rnd(0,8)).toFixed(1)+'s');
+        i.style.setProperty('--dx', rnd(-4,4).toFixed(1)+'px');
+        i.style.setProperty('--dy', rnd(-7,3).toFixed(1)+'px');
+        i.style.setProperty('--dr', rnd(-1.2,1.2).toFixed(2)+'deg');
+        s.appendChild(i); d.appendChild(s); return s;
+      });
+      $lines.appendChild(d); els.push(d);
+    });
+    lines=list;
+    $lines.style.transition='none'; $lines.style.transform='translate(-50%,0)';
+    void $lines.offsetWidth; $lines.style.transition='';
   }
-}
 
-function leave() {
-  if (S && S.ref) { S.ref.off(); if (S.me === 0) S.ref.remove(); }
-  S = null; DATA = {}; $('#ov').classList.remove('on'); show('menu');
-}
+  function setCurrent(idx){
+    cur=idx; onCount=-1;
+    const emptyNow = idx>=0 && !lines[idx].text;
+    els.forEach((d,i)=>{
+      const dist = idx-i;
+      d.classList.toggle('cur', i===idx);
+      d.classList.toggle('past', i<idx);
+      if(i===idx){ d._w.forEach(w=>w.classList.remove('on')); d.style.opacity=emptyNow?0:1; }
+      else if(i<idx){
+        d.style.opacity = emptyNow ? 0 : (dist===1?.28: dist===2?.1 : 0);
+        d.style.transform = 'scale(' + (dist===1?.74:.62) + ')';
+      } else { d.style.opacity=0; d.style.transform='scale(.8)'; d._w.forEach(w=>w.classList.remove('on')); }
+      if(i===idx) d.style.transform='';
+    });
+    if(idx>=0){
+      const d=els[idx];
+      const y = -(d.offsetTop + d.offsetHeight/2) + 0; // Zeile auf Mitte des Bildschirms
+      $lines.style.transform = 'translate(-50%,' + y + 'px)';
+    }
+  }
 
-const act = {
-  start: () => show('start'), menu: () => show('menu'), rules: () => show('rules'),
-  online: goOnline, onl: () => show('onl'), create, joinscr: () => { $('#ji').value = ''; show('join'); }, join,
-  local: () => { S = newS('local', 0, null); startGame(); },
-  leave, mv: b => addMove(b.dataset.k), undo: () => { S.plan.pop(); ui(); }, ok: submit
-};
-document.addEventListener('click', e => { const b = e.target.closest('[data-a]'); if (b && act[b.dataset.a]) act[b.dataset.a](b); });
-$('#ji').addEventListener('input', e => e.target.value = e.target.value.replace(/\D/g, '').slice(0, 2));
+  function reveal(t){
+    if(cur<0 || !els[cur]) return;
+    const d=els[cur], n=d._w.length; if(!n) return;
+    const start=lines[cur].t, next=lines[cur+1]?lines[cur+1].t:start+5;
+    const span=Math.min(Math.max(next-start,1)*.55, 2.6);
+    const el=t-start; let c=0;
+    for(let i=0;i<n;i++){ if(el >= (i/n)*span) c=i+1; }
+    if(c!==onCount){ d._w.forEach((w,i)=>w.classList.toggle('on', i<c)); onCount=c; }
+  }
+
+  function indexAt(t){
+    let lo=0, hi=lines.length-1, r=-1;
+    while(lo<=hi){ const m=(lo+hi)>>1; if(lines[m].t<=t){ r=m; lo=m+1; } else hi=m-1; }
+    return r;
+  }
+
+  /* ===================== Player-State ===================== */
+  const S = { track:null, progress:0, at:0, playing:false };
+  const pos = () => S.playing ? S.progress + (performance.now()-S.at) : S.progress;
+
+  function frame(){
+    if(lines.length && S.track){
+      const t = pos()/1000 + offset;
+      const idx = indexAt(t);
+      if(idx!==cur) setCurrent(idx);
+      reveal(t);
+    }
+    requestAnimationFrame(frame);
+  }
+
+  function showStatus(msg){ if(msg){ $status.textContent=msg; $status.classList.remove('hide'); } else $status.classList.add('hide'); }
+
+  let loadToken=0;
+  async function onTrack(tr){
+    const my=++loadToken;
+    $meta.textContent = tr.artist + '  —  ' + tr.name;
+    $meta.classList.remove('off');
+    build([]); showStatus('Lade Lyrics …');
+    const l = await fetchLyrics(tr);
+    if(my!==loadToken) return;
+    if(!l.length){ showStatus('Keine synchronisierten Lyrics gefunden'); return; }
+    build(l); showStatus('');
+  }
+
+  let pollTimer;
+  async function poll(){
+    let wait=2000;
+    try{
+      const token=await getToken();
+      if(!token) return;
+      const t0=performance.now();
+      const r=await fetch('https://api.spotify.com/v1/me/player/currently-playing', { headers:{Authorization:'Bearer '+token} });
+      const rtt=performance.now()-t0;
+      if(r.status===204){
+        S.playing=false; S.track=null; loadToken++; build([]); $meta.classList.add('off');
+        showStatus('Spiele einen Song in Spotify ab'); wait=3000;
+      } else if(r.status===429){
+        wait=(Number(r.headers.get('Retry-After'))||5)*1000;
+      } else if(r.status===401){
+        LS.del('exp'); wait=500;
+      } else if(r.ok){
+        const j=await r.json();
+        if(!j || !j.item || j.currently_playing_type!=='track'){
+          S.playing=false; S.track=null; build([]); $meta.classList.add('off');
+          showStatus(j && j.currently_playing_type==='ad' ? 'Werbung …' : 'Spiele einen Song in Spotify ab'); wait=3000;
+        } else {
+          S.progress=j.progress_ms; S.at=performance.now()-rtt/2; S.playing=j.is_playing;
+          const it=j.item;
+          if(!S.track || S.track.id!==it.id){
+            S.track={ id:it.id, name:it.name, artist:it.artists[0].name, album:it.album.name, duration:it.duration_ms };
+            onTrack(S.track);
+          }
+          wait=1500;
+        }
+      }
+    }catch(e){ console.warn(e); wait=4000; }
+    pollTimer=setTimeout(poll, wait);
+  }
+
+  /* ===================== Bedienung ===================== */
+  function updOff(){ $('off').textContent='Offset: ' + (offset>=0?'+':'') + offset.toFixed(1) + ' s'; }
+  addEventListener('keydown', e=>{
+    const k=e.key.toLowerCase();
+    if(k==='f'){ document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen(); }
+    else if(k==='i'){ $meta.classList.toggle('off'); }
+    else if(k==='l'){ logout(); }
+    else if(e.key==='ArrowRight'){ offset+=.1; LS.set('offset',offset); updOff(); }
+    else if(e.key==='ArrowLeft'){ offset-=.1; LS.set('offset',offset); updOff(); }
+  });
+  let idleT; const wake=()=>{ document.body.classList.remove('idle'); clearTimeout(idleT); idleT=setTimeout(()=>document.body.classList.add('idle'),2500); };
+  ['mousemove','mousedown','keydown','touchstart'].forEach(ev=>addEventListener(ev,wake)); wake();
+  addEventListener('resize', ()=>{ if(cur>=0) setCurrent(cur); });
+  $('go').onclick=login;
+  $('cid').addEventListener('keydown', e=>{ if(e.key==='Enter') login(); });
+
+  /* ===================== Start ===================== */
+  (async function init(){
+    updOff();
+    $('ruri').textContent = REDIRECT;
+    $('cid').value = LS.get('cid','');
+    await handleCallback();
+    if(LS.get('access')){
+      showStatus('Spiele einen Song in Spotify ab');
+      requestAnimationFrame(frame); poll();
+    } else {
+      showStatus(''); $('setup').classList.add('show');
+    }
+  })();
+})();
 </script>
 </body>
 </html>
